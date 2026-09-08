@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saioa hasi — Inbentario eraginkorra</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="login-screen">
+  <div class="login-panel">
+    <span class="tag">INV-01</span>
+    <h1>Mintegiko inbentarioa</h1>
+
+    <div class="login-error" id="loginError"></div>
+
+    <form id="loginForm" novalidate>
+      <div class="field" id="fieldUsername">
+        <label for="username">Erabiltzailea</label>
+        <input type="text" id="username" name="username" autocomplete="username" required>
+        <div class="error">Erabiltzaile-izena beharrezkoa da.</div>
+      </div>
+
+      <div class="field" id="fieldPassword">
+        <label for="password">Pasahitza</label>
+        <input type="password" id="password" name="password" autocomplete="current-password" required minlength="8">
+        <div class="error">Pasahitzak gutxienez 8 karaktere izan behar ditu.</div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-amber">Sartu</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/validate.js"></script>
+<script src="js/login.js"></script>
+</body>
+</html>

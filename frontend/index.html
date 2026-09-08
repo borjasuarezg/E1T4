@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ekipamendua — Inbentario eraginkorra</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="tag">INV-01</span>
+      <h1>Inbentarioa</h1>
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="active">Ekipamendua</a>
+      <a href="etiquetas.html">Etiketak</a>
+      <a href="gelas.html">Gelak</a>
+      <a href="compras.html">Erosketak</a>
+      <a href="usuarios.html" id="navUsuarios" hidden>Erabiltzaileak</a>
+    </nav>
+    <div class="user-box" id="userBox">
+      <strong id="userName">—</strong>
+      <span class="role-badge" id="userRole">—</span>
+      <p style="margin-top:10px"><a href="#" id="logoutLink">Saioa itxi</a></p>
+    </div>
+  </aside>
+
+  <main>
+    <div class="page-head">
+      <div>
+        <h2>Ekipamendua</h2>
+        <p>Mintegiko materialaren katalogoa eta stock-a</p>
+      </div>
+      <button class="btn btn-amber" id="btnNuevo">+ Ekipo berria</button>
+    </div>
+
+    <table class="inventory" id="tablaEquipos">
+      <thead>
+        <tr>
+          <th>Izena</th>
+          <th>Marka / Modeloa</th>
+          <th>Kategoria</th>
+          <th>Stock</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbodyEquipos">
+        <!-- filas insertadas por js/equipos.js vía fetch a /api/equipos -->
+        <tr><td colspan="5" style="color:var(--text-mute)">Kargatzen…</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Formulario de alta/edición, oculto hasta que se pulsa "Ekipo berria" -->
+    <div class="form-card" id="formEquipo" style="display:none; margin-top:24px;">
+      <h3 id="formTitulo" style="margin-top:0">Ekipo berria</h3>
+      <form id="equipoForm" novalidate>
+        <input type="hidden" id="equipoId">
+
+        <div class="field" id="f_nombre">
+          <label for="nombre">Izena *</label>
+          <input type="text" id="nombre" maxlength="120" required>
+          <div class="error">Izena beharrezkoa da.</div>
+        </div>
+
+        <div class="field" id="f_marca">
+          <label for="marca">Marka *</label>
+          <input type="text" id="marca" required>
+          <div class="error">Marka beharrezkoa da.</div>
+        </div>
+
+        <div class="field" id="f_modelo">
+          <label for="modelo">Modeloa *</label>
+          <input type="text" id="modelo" required>
+          <div class="error">Modeloa beharrezkoa da.</div>
+        </div>
+
+        <div class="field" id="f_categoria">
+          <label for="categoria_id">Kategoria *</label>
+          <select id="categoria_id" required></select>
+          <div class="error">Kategoria bat aukeratu behar duzu.</div>
+        </div>
+
+        <div class="field" id="f_descripcion">
+          <label for="descripcion">Deskribapena</label>
+          <textarea id="descripcion" rows="3" placeholder="Prozesadorea, RAM, HDD, txartel grafikoa…"></textarea>
+        </div>
+
+        <div class="field" id="f_stock">
+          <label for="stock">Stock hasierakoa *</label>
+          <input type="number" id="stock" min="0" step="1" required>
+          <div class="error">Stock-ak zenbaki positiboa izan behar du.</div>
+        </div>
+
+        <div class="field">
+          <label><input type="checkbox" id="es_fungible" style="width:auto"> Material fungiblea da (ez da etiketatuko)</label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Gorde</button>
+          <button type="button" class="btn btn-ghost" id="btnCancelar">Utzi</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/validate.js"></script>
+<script src="js/equipos.js"></script>
+</body>
+</html>
