@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Erabiltzaileak — Inbentarioa</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><span class="tag">INV-01</span><h1>Inbentarioa</h1></div>
+    <nav class="nav">
+      <a href="index.html">Ekipamendua</a>
+      <a href="etiquetas.html">Etiketak</a>
+      <a href="gelas.html">Gelak</a>
+      <a href="compras.html">Erosketak</a>
+      <a href="usuarios.html" class="active">Erabiltzaileak</a>
+    </nav>
+    <div class="user-box" id="userBox">
+      <strong id="userName">—</strong>
+      <span class="role-badge" id="userRole">—</span>
+      <p style="margin-top:10px"><a href="#" id="logoutLink">Saioa itxi</a></p>
+    </div>
+  </aside>
+
+  <main>
+    <div class="page-head">
+      <div><h2>Erabiltzaileak</h2><p>Administratzaileak soilik</p></div>
+      <button class="btn btn-amber" id="btnNuevoUsuario">+ Erabiltzaile berria</button>
+    </div>
+
+    <table class="inventory">
+      <thead><tr><th>Erabiltzailea</th><th>Rola</th></tr></thead>
+      <tbody id="tbodyUsuarios"><tr><td colspan="2" style="color:var(--text-mute)">Kargatzen…</td></tr></tbody>
+    </table>
+
+    <div class="form-card" id="formUsuario" style="display:none; margin-top:24px;">
+      <h3 style="margin-top:0">Erabiltzaile berria</h3>
+      <form id="usuarioForm" novalidate>
+        <div class="field"><label for="username">Erabiltzaile-izena *</label><input type="text" id="username" required></div>
+        <div class="field"><label for="password">Pasahitza *</label><input type="password" id="password" required minlength="8"></div>
+        <div class="field"><label for="rol">Rola</label>
+          <select id="rol"><option value="teknikaria">teknikaria</option><option value="admin">admin</option></select>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Gorde</button>
+          <button type="button" class="btn btn-ghost" id="btnCancelarUsuario">Utzi</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+<script src="js/api.js"></script>
+<script src="js/validate.js"></script>
+<script src="js/usuarios.js"></script>
+</body>
+</html>

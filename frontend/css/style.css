@@ -1,0 +1,276 @@
+/* =====================================================================
+   INBENTARIO ERAGINKORRA — hoja de estilos
+   -----------------------------------------------------------------------
+   Dirección de diseño: inventario/etiquetado físico de un taller de
+   informática. La paleta se apoya en el color de las etiquetas de
+   activo (ámbar) sobre un tono tinta casi-negro, con una tipografía
+   monoespaciada para códigos de etiqueta/stock (igual que en un
+   listado de almacén) y una sans para el resto de la interfaz.
+   ===================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+    /* Paleta */
+    --ink:        #161B22;   /* casi negro, con matiz azulado */
+    --ink-soft:   #232B36;
+    --paper:      #ECE9E2;   /* fondo principal, gris cálido */
+    --paper-card: #F7F5F0;
+    --line:       #D8D4C9;
+    --amber:      #E2A63B;   /* color de etiqueta física */
+    --amber-dark: #B87F1E;
+    --teal:       #3E7C74;   /* acento secundario (marca Santurtzi) */
+    --red:        #B0402E;
+    --text:       #1B2027;
+    --text-mute:  #5B6270;
+    --white:      #FFFFFF;
+
+    --font-ui:   'Space Grotesk', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+    --radius: 3px;
+    --shadow: 0 1px 0 rgba(22,27,34,.06);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+a { color: var(--teal); }
+
+/* ---------- Layout general: sidebar + contenido ---------- */
+.app {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: 100vh;
+}
+
+.sidebar {
+    background: var(--ink);
+    color: #C9CDD4;
+    padding: 28px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.brand {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+.brand .tag {
+    background: var(--amber);
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 2px;
+    letter-spacing: .04em;
+}
+.brand h1 {
+    font-size: 17px;
+    margin: 0;
+    color: var(--white);
+    font-weight: 500;
+}
+
+.nav { display: flex; flex-direction: column; gap: 2px; }
+.nav a {
+    color: #AEB4BE;
+    text-decoration: none;
+    padding: 9px 10px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    border-left: 2px solid transparent;
+}
+.nav a:hover { background: var(--ink-soft); color: var(--white); }
+.nav a.active {
+    background: var(--ink-soft);
+    color: var(--white);
+    border-left-color: var(--amber);
+}
+
+.sidebar .user-box {
+    margin-top: auto;
+    border-top: 1px solid #2C3644;
+    padding-top: 16px;
+    font-size: 13px;
+    color: #8A93A1;
+}
+.sidebar .user-box strong { color: var(--white); display: block; }
+.role-badge {
+    display: inline-block;
+    margin-top: 4px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 2px;
+    background: var(--ink-soft);
+    color: var(--amber);
+}
+
+/* ---------- Contenido principal ---------- */
+main {
+    padding: 32px 40px;
+}
+
+.page-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 16px;
+}
+.page-head h2 { margin: 0 0 4px; font-size: 22px; font-weight: 500; }
+.page-head p { margin: 0; color: var(--text-mute); font-size: 13px; }
+
+.btn {
+    font-family: var(--font-ui);
+    font-size: 14px;
+    border: none;
+    border-radius: var(--radius);
+    padding: 9px 16px;
+    cursor: pointer;
+    font-weight: 500;
+}
+.btn-primary { background: var(--ink); color: var(--white); }
+.btn-primary:hover { background: var(--ink-soft); }
+.btn-amber { background: var(--amber); color: var(--ink); }
+.btn-amber:hover { background: var(--amber-dark); color: var(--white); }
+.btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+.btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red); }
+
+/* ---------- Tabla estilo "listado de almacén" ---------- */
+table.inventory {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--paper-card);
+    box-shadow: var(--shadow);
+}
+table.inventory thead th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-mute);
+    padding: 10px 14px;
+    border-bottom: 2px solid var(--ink);
+}
+table.inventory tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+}
+table.inventory tbody tr:hover { background: #F1EEE6; }
+
+.tag-code {
+    font-family: var(--font-mono);
+    background: var(--ink);
+    color: var(--amber);
+    padding: 2px 7px;
+    border-radius: 2px;
+    font-size: 12.5px;
+    letter-spacing: .03em;
+}
+
+.badge {
+    font-size: 11.5px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--text-mute);
+    font-family: var(--font-mono);
+}
+.badge.stock-ok   { border-color: var(--teal); color: var(--teal); }
+.badge.stock-low  { border-color: var(--red); color: var(--red); }
+
+/* ---------- Formularios ---------- */
+.form-card {
+    background: var(--paper-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    max-width: 520px;
+}
+.field { margin-bottom: 16px; }
+.field label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-mute);
+    margin-bottom: 5px;
+}
+.field input, .field select, .field textarea {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    font-family: var(--font-ui);
+    font-size: 14px;
+    background: var(--white);
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+    outline: 2px solid var(--amber);
+    outline-offset: 1px;
+}
+.field .error {
+    color: var(--red);
+    font-size: 12.5px;
+    margin-top: 4px;
+    display: none;
+}
+.field.invalid input, .field.invalid select { border-color: var(--red); }
+.field.invalid .error { display: block; }
+
+.form-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+/* ---------- Login ---------- */
+.login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ink);
+}
+.login-panel {
+    background: var(--paper-card);
+    padding: 40px;
+    width: 360px;
+    border-radius: var(--radius);
+}
+.login-panel .tag {
+    background: var(--amber); color: var(--ink); font-family: var(--font-mono);
+    font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 2px;
+}
+.login-panel h1 { font-size: 20px; font-weight: 500; margin: 10px 0 24px; }
+.login-error {
+    background: #F6E3DD; color: var(--red); font-size: 13px;
+    padding: 8px 12px; border-radius: var(--radius); margin-bottom: 16px; display: none;
+}
+
+/* Accesibilidad: foco visible siempre */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+}
+
+@media (max-width: 760px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar { flex-direction: row; overflow-x: auto; padding: 14px 16px; }
+    .sidebar .user-box { display: none; }
+    main { padding: 20px; }
+}
