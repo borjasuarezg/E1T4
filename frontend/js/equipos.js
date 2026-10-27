@@ -55,6 +55,7 @@ document.getElementById('btnNuevo').addEventListener('click', () => {
     document.getElementById('equipoId').value = '';
     formTitulo.textContent = 'Ekipo berria';
     formCard.style.display = 'block';
+    document.getElementById('nombre').focus();
 });
 
 document.getElementById('btnCancelar').addEventListener('click', () => formCard.style.display = 'none');
@@ -68,8 +69,9 @@ tbody.addEventListener('click', async (e) => {
         if (!confirm('Ziur zaude ekipo hau ezabatu nahi duzula?')) return;
         try {
             await api.delete(`/equipos/${id}`);
+            if (typeof showToast === 'function') showToast('Ekipoa ezabatu da', 'success');
             await cargarEquipos();
-        } catch (err) { alert(err.message); }
+        } catch (err) { if (typeof showToast === 'function') showToast(err.message, 'error'); else alert(err.message); }
     }
 
     if (btn.dataset.action === 'editar') {
@@ -83,7 +85,7 @@ tbody.addEventListener('click', async (e) => {
             selCategoria.value = eq.categoria_id || '';
             formTitulo.textContent = 'Ekipoa editatu';
             formCard.style.display = 'block';
-        } catch (err) { alert(err.message); }
+        } catch (err) { if (typeof showToast === 'function') showToast(err.message, 'error'); else alert(err.message); }
     }
 });
 
@@ -104,12 +106,14 @@ equipoForm.addEventListener('submit', async (e) => {
     try {
         if (id) {
             await api.put(`/equipos/${id}`, payload);
+            if (typeof showToast === 'function') showToast('Ekipoa eguneratu da', 'success');
         } else {
             await api.post('/equipos', payload);
+            if (typeof showToast === 'function') showToast('Ekipo berria sortu da', 'success');
         }
         formCard.style.display = 'none';
         await cargarEquipos();
-    } catch (err) { alert(err.message); }
+    } catch (err) { if (typeof showToast === 'function') showToast(err.message, 'error'); else alert(err.message); }
 });
 
 (async function start() {

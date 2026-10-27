@@ -99,5 +99,29 @@ CREATE TABLE mugimenduak (
         ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- ------------------------------------------------------------
+-- 7. Taula: taldeak
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS partaideak;
+DROP TABLE IF EXISTS taldeak;
+CREATE TABLE taldeak (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    izena VARCHAR(100) NOT NULL,
+    puntuazioa INT NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ------------------------------------------------------------
+-- 8. Taula: partaideak
+-- ------------------------------------------------------------
+CREATE TABLE partaideak (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    izena VARCHAR(100) NOT NULL,
+    taldea_id INT NOT NULL,
+    CONSTRAINT fk_partaideak_taldeak
+        FOREIGN KEY (taldea_id) REFERENCES taldeak(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Kanpo-gakoen egiaztapena berriro aktibatu
 SET FOREIGN_KEY_CHECKS = 1;

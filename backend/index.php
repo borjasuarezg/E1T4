@@ -10,8 +10,9 @@ $origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
 
 header("Access-Control-Allow-Origin: {$origin}");
 header('Access-Control-Allow-Credentials: true');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept');
 header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
+header('Vary: Origin');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { 
     http_response_code(204);
@@ -42,28 +43,31 @@ try {
 
         case 'equipos':
             require_once __DIR__ . '/api/equipos.php';
-            equipos_handle($method, $id);
             break;
 
         case 'etiquetas':
             require_once __DIR__ . '/api/etiquetas.php';
-            etiquetas_handle($method, $id, ['action' => $accion]);
             break;
 
         case 'categorias':
         case 'gelas':
             require_once __DIR__ . '/api/catalogos.php';
-            catalogo_handle($recurso, $method, $id);
             break;
 
         case 'compras':
             require_once __DIR__ . '/api/compras.php';
-            compras_handle($method, $id);
             break;
 
         case 'usuarios':
             require_once __DIR__ . '/api/usuarios.php';
-            usuarios_handle($method, $id);
+            break;
+
+        case 'taldeak':
+            require_once __DIR__ . '/api/taldeak.php';
+            break;
+
+        case 'partaideak':
+            require_once __DIR__ . '/api/partaideak.php';
             break;
 
         default:

@@ -1,48 +1,21 @@
 <?php
-require_once __DIR__ . '/../auth.php';
 
-function usuarios_handle(string $method, ?int $id): void
-{
-    require_admin();
-    $pdo = get_db();
+require_once __DIR__ . '/../db.php';
+require_once __DIR__ . '/../controllers/UsuariosController.php';
 
-    switch ($method) {
-        case 'GET':
-            if ($id) {
-                $stmt = $pdo->prepare('SELECT id, username, rol FROM erabiltzaileak WHERE id = ?');
-                $stmt->execute([$id]);
-                $row = $stmt->fetch();
-                if (!$row) json_response(['error' => 'Ez da aurkitu.'], 404);
-                json_response($row);
-            } else {
-                json_response($pdo->query('SELECT id, username, rol FROM erabiltzaileak ORDER BY username')->fetchAll());
-            }
-            break;
+$method = $_SERVER['REQUEST_METHOD'];
+$pdo = get_db();
+$controller = new UsuariosController($pdo);
 
-        case 'PUT':
-            if (!$id) json_response(['error' => 'ID beharrezkoa da.'], 400);
-            $d = read_json_body();
-            require_fields($d, ['username', 'rol']);
+$path = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+$path = preg_replace('#^api/#', '', $path);
+$segments = array_values(array_filter(explode('/', $path)));
 
-            $sql = 'UPDATE erabiltzaileak SET username=:u, rol=:r WHERE id=:id';
-            $params = ['u' => $d['username'], 'r' => $d['rol'], 'id' => $id];
+$id = isset($segments[1]) && ctype_digit($segments[1]) ? (int)$segments[1] : null;
 
-            if (!empty($d['password'])) {
-                $sql = 'UPDATE erabiltzaileak SET username=:u, rol=:r, pasahitza=:p WHERE id=:id';
-                $params['p'] = password_hash($d['password'], PASSWORD_DEFAULT);
-            }
-
-            $pdo->prepare($sql)->execute($params);
-            json_response(['ok' => true]);
-            break;
-
-        case 'DELETE':
-            if (!$id) json_response(['error' => 'ID beharrezkoa da.'], 400);
-            $pdo->prepare('DELETE FROM erabiltzaileak WHERE id = ?')->execute([$id]);
-            json_response(['ok' => true]);
-            break;
-
-        default:
-            json_response(['error' => 'Metodoa ez da onartzen.'], 405);
-    }
+try {
+    $controller->handle($method, $id);
+} catch (Throwable $e) {
+    error_log($e->getMessage());
+    json_response(['error' => 'Zerbitzariaren barne errorea.'], 500);
 }

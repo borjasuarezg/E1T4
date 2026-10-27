@@ -8,7 +8,6 @@
    listado de almacén) y una sans para el resto de la interfaz.
    ===================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 :root {
     /* Paleta */
@@ -25,8 +24,8 @@
     --text-mute:  #5B6270;
     --white:      #FFFFFF;
 
-    --font-ui:   'Space Grotesk', system-ui, sans-serif;
-    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --font-ui:   system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 
     --radius: 3px;
     --shadow: 0 1px 0 rgba(22,27,34,.06);
@@ -41,7 +40,9 @@ html, body {
     color: var(--text);
     font-family: var(--font-ui);
     font-size: 15px;
-    line-height: 1.5;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 a { color: var(--teal); }
@@ -81,7 +82,8 @@ a { color: var(--teal); }
     font-size: 17px;
     margin: 0;
     color: var(--white);
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: -0.01em;
 }
 
 .nav { display: flex; flex-direction: column; gap: 2px; }
@@ -144,12 +146,14 @@ main {
     cursor: pointer;
     font-weight: 500;
 }
-.btn-primary { background: var(--ink); color: var(--white); }
+.btn-primary { background: var(--ink); color: var(--white); transition: background 150ms ease; }
 .btn-primary:hover { background: var(--ink-soft); }
-.btn-amber { background: var(--amber); color: var(--ink); }
+.btn-amber { background: var(--amber); color: var(--ink); transition: background 150ms ease; }
 .btn-amber:hover { background: var(--amber-dark); color: var(--white); }
-.btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
-.btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red); }
+.btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--line); transition: background 150ms ease; }
+.btn-ghost:hover { background: rgba(0,0,0,0.02); }
+.btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red); transition: background 150ms ease; }
+.btn-danger:hover { background: rgba(176,64,46,0.08); }
 
 /* ---------- Tabla estilo "listado de almacén" ---------- */
 table.inventory {
@@ -268,9 +272,39 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     * { animation: none !important; transition: none !important; }
 }
 
+.toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1000;
+}
+
+.toast {
+    background: var(--ink);
+    color: var(--white);
+    padding: 12px 18px;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-size: 14px;
+    animation: slideIn 200ms ease;
+}
+
+.toast.success { background: var(--teal); }
+.toast.error { background: var(--red); }
+.toast.warning { background: var(--amber); color: var(--ink); }
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
 @media (max-width: 760px) {
     .app { grid-template-columns: 1fr; }
     .sidebar { flex-direction: row; overflow-x: auto; padding: 14px 16px; }
     .sidebar .user-box { display: none; }
     main { padding: 20px; }
+    .toast-container { left: 12px; right: 12px; bottom: 12px; }
 }
