@@ -24,10 +24,10 @@ Gehitu lerro hauek:
 
 ```cron
 # Egunero 02:00etan, backend-aren babeskopia
-0 2 * * * /var/www/backend-scripts/backup.sh /var/www/backend /home/backuser/backups >> /var/log/backup.log 2>&1
+0 2 * * * /var/www/backend/scripts/backup.sh /var/www/backend /home/backuser/backups >> /var/log/backup.log 2>&1
 
 # 10 minuturo, sistemaren monitorizazioa
-*/10 * * * * /var/www/backend-scripts/monitor.sh /var/log/monitor >> /var/log/monitor-cron.log 2>&1
+*/10 * * * * /var/www/backend/scripts/monitor.sh /var/log/monitor >> /var/log/monitor-cron.log 2>&1
 ```
 
 ## 8.4. Egiaztapena

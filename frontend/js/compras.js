@@ -1,20 +1,24 @@
+/**
+ * Módulo: compras.js
+ * Web cliente para gestión de compras e inventario.
+ * Usa funciones globales de base.js: initSesion, escapeHtml, logout, validate*, showToast
+ */
+
 const tbody = document.getElementById('tbodyCompras');
 const formCard = document.getElementById('formCompra');
 const selEquipo = document.getElementById('equipo_id');
 
 async function initSesion() {
-    try {
-        const { user } = await api.get('/auth/me');
-        if (!user) { window.location.href = 'login.html'; return; }
-        document.getElementById('userName').textContent = user.username;
-        document.getElementById('userRole').textContent = user.rol;
-        if (user.rol === 'admin') document.getElementById('navUsuarios').hidden = false;
-    } catch { window.location.href = 'login.html'; }
+    const { user } = await api.get('/auth/me');
+    if (!user) { window.location.href = 'login.html'; return; }
+    document.getElementById('userName').textContent = user.username;
+    document.getElementById('userRole').textContent = user.rol;
+    if (user.rol === 'admin') document.getElementById('navUsuarios').hidden = false;
 }
 
 document.getElementById('logoutLink').addEventListener('click', async (e) => {
     e.preventDefault();
-    await api.post('/auth/logout', {});
+    await logout();
     window.location.href = 'login.html';
 });
 
@@ -34,7 +38,7 @@ async function cargarCompras() {
         <tr>
             <td>${escapeHtml(c.equipo_nombre)}</td>
             <td>${c.fecha_compra}</td>
-            <td><span class="badge">${c.cantidad} unitate</span></td>
+            <td><span class="badge">${c.cantidad} unitez</span></td>
         </tr>`).join('') : `<tr><td colspan="3" style="color:var(--text-mute)">Ez dago erosketarik.</td></tr>`;
 }
 
@@ -59,11 +63,12 @@ document.getElementById('compraForm').addEventListener('submit', async (e) => {
         await api.post('/compras', {
             equipo_id: Number(selEquipo.value),
             fecha_compra: fechaEl.value,
-            cantidad: Number(cantidadEl.value),
+            cantidad: Number(cantidadEl.value)
         });
         formCard.style.display = 'none';
         await cargarCompras();
-    } catch (err) { alert(err.message); }
+        showToast('Erosketa ongi erregistratu da', 'success');
+    } catch (err) { showToast(err.message, 'error'); }
 });
 
 (async function start() {

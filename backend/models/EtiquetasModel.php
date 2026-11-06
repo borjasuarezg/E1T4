@@ -88,9 +88,8 @@ class EtiquetasModel
         $this->pdo->beginTransaction();
         try {
             // Cerrar movimiento activo
-            $stmtClose = $this->pdo->prepare('UPDATE mugimenduak SET amaieraData = :amaiera WHERE gailuId = :gailuId AND amaieraData IS NULL');
+            $stmtClose = $this->pdo->prepare('UPDATE mugimenduak SET amaieraData = CURDATE() WHERE gailuId = :gailuId AND amaieraData IS NULL');
             $stmtClose->execute([
-                'amaiera' => $d['hasieraData'] ?? date('Y-m-d'),
                 'gailuId' => $d['gailuId'],
             ]);
 

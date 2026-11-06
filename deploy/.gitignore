@@ -1,0 +1,27 @@
+# Inbentario Eraginkorra - .gitignore
+# Ficheros de configuración y datos sensibles que NO deben subirse al repositorio
+
+# Configuración local de backend
+backend/config.local.php
+
+# Ficheros del sistema
+.DS_Store
+Thumbs.db
+
+# Editores y IDEs
+.vscode/
+.idea/
+
+# Ficheros de copia de seguridad y logs generados
+*.tar.gz
+*.log
+backup-*
+
+# Ficheros de configuración de sesión (nunca)
+session.cookie
+
+# Base de datos (el schema SQL sí que sube)
+# database/data.sql (solo el esqueleto schema.sql sube)
+
+# Ficheros de entorno sensibles
+backend/.env

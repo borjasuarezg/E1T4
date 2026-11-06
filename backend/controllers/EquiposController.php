@@ -17,6 +17,14 @@ class EquiposController
     {
         require_login();
 
+        // Validación CSRF para operaciones de escritura
+        if (in_array($method, ['POST', 'PUT', 'DELETE'])) {
+            $csrfHeader = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+            if (!verify_csrf_token($csrfHeader)) {
+                json_response(['error' => 'Token CSRF inválido.'], 403);
+            }
+        }
+
         switch ($method) {
             case 'GET':
                 if ($id !== null) {

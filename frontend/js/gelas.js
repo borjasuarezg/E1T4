@@ -1,3 +1,9 @@
+/**
+ * Módulo: gelas.js
+ * Web cliente para gestión de gelas.
+ * Usa funciones globales de base.js: initSesion, escapeHtml, logout, validate*, showToast
+ */
+
 const tbody = document.getElementById('tbodyGelas');
 const formCard = document.getElementById('formGela');
 
@@ -6,18 +12,16 @@ function escapeHtml(str) {
 }
 
 async function initSesion() {
-    try {
-        const { user } = await api.get('/auth/me');
-        if (!user) { window.location.href = 'login.html'; return; }
-        document.getElementById('userName').textContent = user.username;
-        document.getElementById('userRole').textContent = user.rol;
-        if (user.rol === 'admin') document.getElementById('navUsuarios').hidden = false;
-    } catch { window.location.href = 'login.html'; }
+    const { user } = await api.get('/auth/me');
+    if (!user) { window.location.href = 'login.html'; return; }
+    document.getElementById('userName').textContent = user.username;
+    document.getElementById('userRole').textContent = user.rol;
+    if (user.rol === 'admin') document.getElementById('navUsuarios').hidden = false;
 }
 
 document.getElementById('logoutLink').addEventListener('click', async (e) => {
     e.preventDefault();
-    await api.post('/auth/logout', {});
+    await logout();
     window.location.href = 'login.html';
 });
 
@@ -39,7 +43,8 @@ tbody.addEventListener('click', async (e) => {
     try {
         await api.delete(`/gelas/${id}`);
         await cargarGelas();
-    } catch (err) { alert(err.message); }
+        showToast('Gela ongi ezabatu da', 'success');
+    } catch (err) { showToast(err.message, 'error'); }
 });
 
 document.getElementById('btnNuevaGela').addEventListener('click', () => {
@@ -60,7 +65,8 @@ document.getElementById('gelaForm').addEventListener('submit', async (e) => {
         });
         formCard.style.display = 'none';
         await cargarGelas();
-    } catch (err) { alert(err.message); }
+        showToast('Gela ongi sortu da', 'success');
+    } catch (err) { showToast(err.message, 'error'); }
 });
 
 (async function start() {

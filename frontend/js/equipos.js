@@ -1,3 +1,9 @@
+/**
+ * Módulo: equipos.js
+ * Web cliente para gestión de equipos.
+ * Usa funciones globales de base.js: initSesion, escapeHtml, logout, validate*, showToast, setFieldState
+ */
+
 const tbody = document.getElementById('tbodyEquipos');
 const formCard = document.getElementById('formEquipo');
 const equipoForm = document.getElementById('equipoForm');
@@ -9,18 +15,16 @@ function escapeHtml(str) {
 }
 
 async function initSesion() {
-    try {
-        const { user } = await api.get('/auth/me');
-        if (!user) { window.location.href = 'login.html'; return; }
-        document.getElementById('userName').textContent = user.username;
-        document.getElementById('userRole').textContent = user.rol;
-        if (user.rol === 'admin') document.getElementById('navUsuarios').hidden = false;
-    } catch { window.location.href = 'login.html'; }
+    const { user } = await api.get('/auth/me');
+    if (!user) { window.location.href = 'login.html'; return; }
+    document.getElementById('userName').textContent = user.username;
+    document.getElementById('userRole').textContent = user.rol;
+    if (user.rol === 'admin') document.getElementById('navUsuarios').hidden = false;
 }
 
 document.getElementById('logoutLink').addEventListener('click', async (e) => {
     e.preventDefault();
-    await api.post('/auth/logout', {});
+    await logout();
     window.location.href = 'login.html';
 });
 
@@ -41,7 +45,7 @@ async function cargarEquipos() {
             <td>${escapeHtml(eq.nombre)}</td>
             <td>${escapeHtml(eq.marca || '—')} / ${escapeHtml(eq.modelo || '—')}</td>
             <td>${escapeHtml(eq.categoria_nombre || '—')}</td>
-            <td><span class="badge">${eq.stock} unitate</span></td>
+            <td><span class="badge">${eq.stock} unitez</span></td>
             <td style="text-align:right">
                 <button class="btn btn-ghost" data-action="editar">Editatu</button>
                 <button class="btn btn-danger" data-action="ezabatu">Ezabatu</button>
@@ -69,15 +73,16 @@ tbody.addEventListener('click', async (e) => {
         if (!confirm('Ziur zaude ekipo hau ezabatu nahi duzula?')) return;
         try {
             await api.delete(`/equipos/${id}`);
-            if (typeof showToast === 'function') showToast('Ekipoa ezabatu da', 'success');
+            showToast('Ekipoa ezabatu da', 'success');
             await cargarEquipos();
-        } catch (err) { if (typeof showToast === 'function') showToast(err.message, 'error'); else alert(err.message); }
+        } catch (err) { showToast(err.message, 'error'); }
     }
 
     if (btn.dataset.action === 'editar') {
         try {
             const eq = await api.get(`/equipos/${id}`);
-            document.getElementById('equipoId').value = eq.id;
+
+            document.getElementById('equipoId').value = eq.id || '';
             document.getElementById('nombre').value = eq.nombre || '';
             document.getElementById('marca').value = eq.marca || '';
             document.getElementById('modelo').value = eq.modelo || '';
@@ -85,7 +90,7 @@ tbody.addEventListener('click', async (e) => {
             selCategoria.value = eq.categoria_id || '';
             formTitulo.textContent = 'Ekipoa editatu';
             formCard.style.display = 'block';
-        } catch (err) { if (typeof showToast === 'function') showToast(err.message, 'error'); else alert(err.message); }
+        } catch (err) { showToast(err.message, 'error'); }
     }
 });
 
@@ -106,14 +111,14 @@ equipoForm.addEventListener('submit', async (e) => {
     try {
         if (id) {
             await api.put(`/equipos/${id}`, payload);
-            if (typeof showToast === 'function') showToast('Ekipoa eguneratu da', 'success');
+            showToast('Ekipoa ongi eguneratu da', 'success');
         } else {
             await api.post('/equipos', payload);
-            if (typeof showToast === 'function') showToast('Ekipo berria sortu da', 'success');
+            showToast('Ekipoa ongi sortu da', 'success');
         }
         formCard.style.display = 'none';
         await cargarEquipos();
-    } catch (err) { if (typeof showToast === 'function') showToast(err.message, 'error'); else alert(err.message); }
+    } catch (err) { showToast(err.message, 'error'); }
 });
 
 (async function start() {

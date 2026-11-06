@@ -1,0 +1,31 @@
+# SSH Hardening Configuration for Inventario Eraginkorra
+# Requisitos: sin password, sin root, timeout 5 min, claves ed25519
+
+# /etc/ssh/sshd_config
+
+# --- Autenticación: claves públicas, sin password ---
+PasswordAuthentication no
+PubkeyAuthentication yes
+AuthenticationMethods publickey
+
+# --- Root acceso denegado ---
+PermitRootLogin no
+
+# --- Usuarios autorizados ---
+# Solo estos usuarios pueden conectarse vía SSH
+AllowUsers backuser administratzailea
+
+# --- Límite de sesiones y conexiones ---
+MaxSessions 2
+MaxStartups 2:30:10
+
+# --- Timeout inactividad: 5 minutos (300 segundos) ---
+ClientAliveInterval 60
+ClientAliveCountMax 5
+# 60s * 5 = 300s = 5 minutu desconnecte automatikoki
+
+# --- Segurtasun additional ---
+X11Forwarding no
+
+# --- Banner de bienvenida (opcional) #
+# Banner /etc/ssh/banner

@@ -1,19 +1,23 @@
+/**
+ * Módulo: usuarios.js
+ * Web cliente para gestión de usuarios.
+ * Usa funciones globales de base.js: initSesion, escapeHtml, logout, validate*, showToast
+ */
+
 const tbody = document.getElementById('tbodyUsuarios');
 const formCard = document.getElementById('formUsuario');
 
 async function initSesion() {
-    try {
-        const { user } = await api.get('/auth/me');
-        if (!user) { window.location.href = 'login.html'; return; }
-        if (user.rol !== 'admin') { window.location.href = 'index.html'; return; }
-        document.getElementById('userName').textContent = user.username;
-        document.getElementById('userRole').textContent = user.rol;
-    } catch { window.location.href = 'login.html'; }
+    const { user } = await api.get('/auth/me');
+    if (!user) { window.location.href = 'login.html'; return; }
+    if (user.rol !== 'admin') { window.location.href = 'index.html'; return; }
+    document.getElementById('userName').textContent = user.username;
+    document.getElementById('userRole').textContent = user.rol;
 }
 
 document.getElementById('logoutLink').addEventListener('click', async (e) => {
     e.preventDefault();
-    await api.post('/auth/logout', {});
+    await logout();
     window.location.href = 'login.html';
 });
 
@@ -54,11 +58,11 @@ document.getElementById('usuarioForm').addEventListener('submit', async (e) => {
         await api.post('/auth/register', {
             username: usernameEl.value.trim(),
             password: passwordEl.value,
-            rol: document.getElementById('rol').value,
+            rol: document.getElementById('rol').value
         });
         formCard.style.display = 'none';
         await cargarUsuarios();
-    } catch (err) { alert(err.message); }
+    } catch (err) { showToast(err.message, 'error'); }
 });
 
 (async function start() {

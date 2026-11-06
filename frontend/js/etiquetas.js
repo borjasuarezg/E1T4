@@ -1,3 +1,9 @@
+/**
+ * Módulo: etiquetas.js
+ * Web cliente para gestión de etiquetas.
+ * Usa funciones globales de base.js: initSesion, escapeHtml, logout, validate*, showToast
+ */
+
 const tbody = document.getElementById('tbodyEtiquetas');
 const formCard = document.getElementById('formEtiqueta');
 const selEquipo = document.getElementById('equipo_id');
@@ -8,18 +14,16 @@ function escapeHtml(str) {
 }
 
 async function initSesion() {
-    try {
-        const { user } = await api.get('/auth/me');
-        if (!user) { window.location.href = 'login.html'; return; }
-        document.getElementById('userName').textContent = user.username;
-        document.getElementById('userRole').textContent = user.rol;
-        if (user.rol === 'admin') document.getElementById('navUsuarios').hidden = false;
-    } catch { window.location.href = 'login.html'; }
+    const { user } = await api.get('/auth/me');
+    if (!user) { window.location.href = 'login.html'; return; }
+    document.getElementById('userName').textContent = user.username;
+    document.getElementById('userRole').textContent = user.rol;
+    if (user.rol === 'admin') document.getElementById('navUsuarios').hidden = false;
 }
 
 document.getElementById('logoutLink').addEventListener('click', async (e) => {
     e.preventDefault();
-    await api.post('/auth/logout', {});
+    await logout();
     window.location.href = 'login.html';
 });
 
@@ -59,7 +63,8 @@ tbody.addEventListener('change', async (e) => {
     const id = e.target.dataset.id;
     try {
         await api.patch(`/etiquetas/${id}/ubicacion`, { gela_id: Number(e.target.value) });
-    } catch (err) { alert(err.message); }
+        showToast('Kokapena ongi eguneratu da', 'success');
+    } catch (err) { showToast(err.message, 'error'); }
 });
 
 tbody.addEventListener('click', async (e) => {
@@ -71,7 +76,8 @@ tbody.addEventListener('click', async (e) => {
         await api.delete(`/etiquetas/${id}`);
         const gelas = await cargarSelects();
         await cargarEtiquetas(gelas);
-    } catch (err) { alert(err.message); }
+        showToast('Etiketa ongi ezabatu da', 'success');
+    } catch (err) { showToast(err.message, 'error'); }
 });
 
 document.getElementById('btnNuevaEtiqueta').addEventListener('click', () => {
@@ -90,12 +96,13 @@ document.getElementById('etiquetaForm').addEventListener('submit', async (e) => 
         await api.post('/etiquetas', {
             codigo: codigoEl.value.trim(),
             equipo_id: Number(selEquipo.value),
-            gela_id: Number(selGela.value),
+            gela_id: Number(selGela.value)
         });
         formCard.style.display = 'none';
         const gelas = await cargarSelects();
         await cargarEtiquetas(gelas);
-    } catch (err) { alert(err.message); }
+        showToast('Etiketa ongi sortu da', 'success');
+    } catch (err) { showToast(err.message, 'error'); }
 });
 
 (async function start() {

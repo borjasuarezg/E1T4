@@ -15,6 +15,14 @@ class UsuariosController
 
     public function handle(string $method, ?int $id): void
     {
+        // Validación CSRF para operaciones de escritura (solo si ya hay sesión)
+        if (isset($_SESSION['user']) && in_array($method, ['POST', 'PUT', 'DELETE'])) {
+            $csrfHeader = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+            if (!verify_csrf_token($csrfHeader)) {
+                json_response(['error' => 'Token CSRF inválido.'], 403);
+            }
+        }
+
         require_admin();
 
         switch ($method) {

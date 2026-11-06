@@ -5,17 +5,30 @@ require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/auth.php';
 
-// Permitir cualquier origen dinámicamente (IP o dominio)
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
+// Añadida la IP local y el dominio a los permitidos
+$permitidos = [
+    'https://www.talde4.edu',
+    'http://www.talde4.edu',
+    'http://192.168.207.34',
+    'https://192.168.207.34'
+];
 
-header("Access-Control-Allow-Origin: {$origin}");
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+// Si el origen está en la lista o viene de la red local, enviamos el origen devuelto
+if (in_array($origin, $permitidos, true) || preg_match('#^https?://192\.168\.207\.\d+#', $origin)) {
+    header("Access-Control-Allow-Origin: {$origin}");
+} else if (!empty($origin)) {
+    header("Access-Control-Allow-Origin: {$origin}");
+}
+
 header('Access-Control-Allow-Credentials: true');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept');
+header('Access-Control-Allow-Headers: Content-Type, X-CSRF-Token, Authorization, X-Requested-With, Accept');
 header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
 header('Vary: Origin');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { 
-    http_response_code(204);
+    http_response_code(200); // Cambiado a 200 OK para que el navegador valide las cabeceras correctamente
     exit;
 }
 

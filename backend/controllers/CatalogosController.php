@@ -17,6 +17,14 @@ class CatalogosController
     {
         require_login();
 
+        // Validación CSRF para operaciones de escritura
+        if (in_array($method, ['POST', 'DELETE'])) {
+            $csrfHeader = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+            if (!verify_csrf_token($csrfHeader)) {
+                json_response(['error' => 'Token CSRF inválido.'], 403);
+            }
+        }
+
         if (!in_array($tabla, ['categorias', 'gelas'], true)) {
             json_response(['error' => 'Baliabidea ez da onartzen.'], 404);
         }

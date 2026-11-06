@@ -16,7 +16,16 @@ class EtiquetasController
     public function handle(string $method, ?int $id, array $opts = []): void
     {
         require_login();
+
         $accion = $opts['action'] ?? null;
+
+        // Validación CSRF para operaciones de escritura
+        if (in_array($method, ['POST', 'PUT', 'DELETE', 'PATCH'])) {
+            $csrfHeader = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+            if (!verify_csrf_token($csrfHeader)) {
+                json_response(['error' => 'Token CSRF inválido.'], 403);
+            }
+        }
 
         switch ($method) {
             case 'GET':
@@ -40,21 +49,36 @@ class EtiquetasController
                         $this->model->move($d);
                         json_response(['ok' => true]);
                     } catch (PDOException $e) {
-                        json_response(['error' => 'Ezin izan da mugitu.'], 500);
+                        json_response(['error' => 'Ezin izan da mugitu: ' . $e->getMessage()], 500);
                     }
                     return;
                 }
 
                 $d = read_json_body();
-                require_fields($d, ['baliabideId', 'etiketa']);
+                
+                // Mapeo flexible de campos del frontend al model
+                $data = [
+                    'baliabideId'  => $d['baliabideId'] ?? $d['ekipoId'] ?? $d['ekipamendua_id'] ?? null,
+                    'etiketa'      => $d['etiketa'] ?? $d['kodea'] ?? $d['etiketaren_kodea'] ?? null,
+                    'erosketaData' => $d['erosketaData'] ?? $d['erosketa_data'] ?? date('Y-m-d'),
+                    'egoera'       => $d['egoera'] ?? 'Operatiboa',
+                    'gelaId'       => $d['gelaId'] ?? $d['gela_id'] ?? $d['hasierakoGela'] ?? null,
+                ];
+
+                if (!$data['baliabideId'] || !$data['etiketa']) {
+                    json_response(['error' => 'Eremu hauek beharrezkoak dira: baliabideId/ekipoId, etiketa/kodea'], 422);
+                }
+
                 try {
-                    $newId = $this->model->create($d);
+                    $newId = $this->model->create($data);
                     json_response(['ok' => true, 'id' => $newId], 201);
                 } catch (PDOException $e) {
                     if ($e->getCode() === '23000') {
-                        json_response(['error' => 'Etiketa hori jadanik existitzen da.'], 409);
+                        json_response([
+                            'error' => 'Gordetzean errorea (Clave duplicada o FK fallida): ' . $e->getMessage()
+                        ], 409);
                     }
-                    json_response(['error' => 'Ezin izan da sortu.'], 500);
+                    json_response(['error' => 'Ezin izan da sortu: ' . $e->getMessage()], 500);
                 }
                 return;
 
@@ -68,6 +92,30 @@ class EtiquetasController
                     json_response(['ok' => true]);
                 } catch (PDOException $e) {
                     json_response(['error' => 'Ezin da ezabatu erlazionatutako datuak daudelako.'], 409);
+                }
+                return;
+
+            case 'PATCH':
+                require_admin();
+                if ($id === null || $accion !== 'ubicacion') {
+                    json_response(['error' => 'ID o acción incorrectos.'], 400);
+                }
+                $d = read_json_body();
+                
+                $data = [
+                    'gailuId' => $id,
+                    'gelaId'  => $d['gelaId'] ?? $d['gela_id'] ?? $d['gela'] ?? null,
+                ];
+
+                if (!$data['gelaId']) {
+                    json_response(['error' => 'gelaId beharrezkoa da.'], 422);
+                }
+
+                try {
+                    $this->model->move($data);
+                    json_response(['ok' => true]);
+                } catch (PDOException $e) {
+                    json_response(['error' => 'Ezin izan da mugitu: ' . $e->getMessage()], 500);
                 }
                 return;
 

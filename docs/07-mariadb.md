@@ -23,8 +23,8 @@ erabiltzaile mugatu bat sortuko dugu:
 -- mysql -u root -p bidez sartuta
 SOURCE /ruta/al/repo/database/schema.sql;
 
-CREATE USER 'inventario_app'@'localhost' IDENTIFIED BY 'PASAHITZ_SENDOA_HEMEN';
-GRANT SELECT, INSERT, UPDATE, DELETE ON inventario_ethazi.* TO 'inventario_app'@'localhost';
+CREATE USER 'inventario_app'@'localhost' IDENTIFIED BY 'PASAHITZA';
+GRANT SELECT, INSERT, UPDATE, DELETE ON e1inbentarioa.* TO 'inventario_app'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
@@ -43,5 +43,5 @@ Egunero exekutatzeko `mysqldump` bidezko script bat gehi daiteke
 `scripts/backup.sh`-i, edo cron bidez zuzenean:
 
 ```bash
-0 3 * * * mysqldump -u inventario_app -p'PASAHITZA' inventario_ethazi | gzip > /home/backuser/backups/db-$(date +\%F).sql.gz
+0 3 * * * mysqldump -u inventario_app -p'PASAHITZA' e1inbentarioa | gzip > /home/backuser/backups/db-$(date +\%F).sql.gz
 ```

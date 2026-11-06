@@ -1,33 +1,33 @@
 # Inbentario Eraginkorra — WAG2 1. Erronka
 
-Web-aplikazioa FP Santurtzi LHko informatika-mintegiko ekipamenduaren
+Web-aplikazioa FP Santurtzi LHko informatika-mintegiko ekipamuien
 inbentarioa kudeatzeko. Proiektu honek eskatzen dituen atal guztiak biltzen ditu:
-datu-basea, backend-a (PHP), frontend-a (HTML/CSS/JS) eta zerbitzariaren
-hedapena (Apache, FTP, SSH, MariaDB, scripts).
+datu-basea, backend-a (PHP), frontend-a (HTML/CSS/JS) eta bertizarienen
+hedapen (Apache, FTP, SSH, MariaDB, scripts).
 
-> ⚠️ **Talde bakoitzak** `talde4` ordeztu behar du bere talde-zenbakiarekin
+> ⚠️ **Talde bakoitzak** `talde4`ordeztu behar du bere talde-zenbakiarekin
 > (domeinuetan, `.htaccess`-etan eta konfigurazio-fitxategietan).
 
 ## Egitura
 
 ```
 inventario/
-├── database/
+├ database/
 │   └── schema.sql              # BDaren diseinu osoa (taulak, FK, trigger, view)
-├── backend/                    # PHP (server.talde4.edu)
+├ backend/
 │   ├── config.php              # DB konexioaren datuak
 │   ├── db.php                  # PDO konexioa
-│   ├── auth.php                # login/logout/register (saioak)
+│   ├── auth.php                # login/logout/register (saioak) - reforzatua
 │   ├── helpers.php             # JSON erantzunak, balidazioa
 │   ├── index.php               # API-aren router bakarra
-│   ├── .htaccess                # /api/* -> index.php birbideratzea
+│   ├── .htaccess              # /api/* -> index.php birbideratzea
 │   └── api/
 │       ├── equipos.php
 │       ├── etiquetas.php
 │       ├── catalogos.php       # categorias + gelas
 │       ├── compras.php
 │       └── usuarios.php
-├── frontend/                   # HTML/CSS/JS (www.talde4.edu)
+├ frontend/
 │   ├── login.html
 │   ├── index.html              # ekipamendua
 │   ├── etiquetas.html
@@ -36,10 +36,10 @@ inventario/
 │   ├── usuarios.html
 │   ├── css/style.css
 │   └── js/*.js
-├── scripts/
+├ scripts/
 │   ├── backup.sh                # cron bidez programatzeko
 │   └── monitor.sh
-└── docs/                        # GitHub Wiki-rako edukia (Markdown)
+└ docs/                         # GitHub Wiki-rako edukia (Markdown)
     ├── 00-Home.md
     ├── 01-instalacion-proxmox-so.md
     ├── 02-configuracion-red.md
@@ -63,17 +63,18 @@ inventario/
 4. Xehetasun guztietarako (Apache, FTP, SSH, MariaDB, sarea...) ikusi `docs/` karpeta
    edo proiektuaren GitHub Wiki-a.
 
-## Segurtasuna (laburpena)
+## Segurtasuna (lurraldean)
 
-- Pasahitzak `password_hash()`/`password_verify()` bidez (inoiz ez testu laura).
-- Saio-kudeaketa PHP session seguruekin (httpOnly, secure, SameSite).
-- SQL injekzioaren aurka: PDO sententzia prestatuak beti.
-- Balidazio bikoitza: bezeroan (JS) eta zerbitzarian (PHP) beti.
-- HTTPS derrigorrezkoa (ziurtagiri autosinatuak), HTTP -> HTTPS birbideratzea.
-- SSH: pasahitzik gabe (klabe fitxategiak), root debekatuta, timeout 5 min.
-- FTP: erabiltzaile anonimoa `/srv/ftp/public`-era mugatuta, gainerakoa seguru.
+- **Pasahitzak**: `password_hash()`/`password_verify()` bidez (sin contraseñas en texto plano).
+- **Login/Registro**: Usa sentencias preparadas PDO, `password_hash` por defecto, y CSRF tokens.
+- **Inyección SQL**: PDO sentencias preparadas siempre (atentatzen ditug).
+- **Balidazio bikoitza**: Bezerton JavaScript (cliente) eta zerbitzaria (PHP) beti.
+- **HTTPS derrigorrezkoa**: HTTP -> HTTPS birbideratzea obligatoria.
+- **SSH**: Pasahitzik gabe (klabe fitxategiak), root debekatuta, timeout 5 min.
+- **FTP**: Erabiltzaile anonimoa `/srv/ftp/public`-era mugatuta, segurtasuna TLS/SSL.
+- **CSRF Tokens**: Cada petición de escritura debe incluir el header `X-CSRF-Token`.
 
 ## Entregagarriak
 
-Ikusi erronkaren dokumentua (`WAG2_Erronka_1_Ikasle_dokumentua.pdf`), 5. atala
-"Egin beharreko lanak", modulu bakoitzeko entregagarrien zerrenda osoarekin.
+Ikosi erronkaren dokumentua (`WAG2_Erronka_1_Ikasle_dokumentua.pdf`), 5. atala
+"Egin beharreko lanak", moduluengo entregagarrien zerrenda osoakin.

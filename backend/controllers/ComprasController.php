@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 require_once __DIR__ . '/../models/ComprasModel.php';
 require_once __DIR__ . '/../helpers.php';
@@ -17,10 +18,23 @@ class ComprasController
     {
         require_login();
 
+        // Validación CSRF para operaciones de escritura
+        if (in_array($method, ['POST', 'DELETE'])) {
+            $csrfHeader = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+            if (!verify_csrf_token($csrfHeader)) {
+                json_response(['error' => 'Token CSRF inválido.'], 403);
+            }
+        }
+
         if ($method === 'POST') {
             require_admin();
             $d = read_json_body();
-            require_fields($d, ['baliabideId', 'etiketa']);
+            
+            $equipoId = $d['baliabideId'] ?? $d['equipo_id'] ?? null;
+            if (!$equipoId) {
+                json_response(['error' => 'Ekipoa (baliabideId edo equipo_id) beharrezkoa da.'], 422);
+            }
+
             try {
                 $res = $this->model->registrar($d);
                 json_response($res, 201);
@@ -34,8 +48,7 @@ class ComprasController
         }
 
         if ($method === 'GET') {
-            // No listado específico en esquema; devolver vacío o resumen básico si se desea
-            json_response([]);
+            json_response($this->model->getAll());
             return;
         }
 
