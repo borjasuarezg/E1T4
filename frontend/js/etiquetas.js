@@ -1,30 +1,11 @@
-/**
- * Módulo: etiquetas.js
- * Web cliente para gestión de etiquetas.
- * Usa funciones globales de base.js: initSesion, escapeHtml, logout, validate*, showToast
- */
-
 const tbody = document.getElementById('tbodyEtiquetas');
 const formCard = document.getElementById('formEtiqueta');
 const selEquipo = document.getElementById('equipo_id');
 const selGela = document.getElementById('gela_id');
 
-function escapeHtml(str) {
-    return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-async function initSesion() {
-    const { user } = await api.get('/auth/me');
-    if (!user) { window.location.href = 'login.html'; return; }
-    document.getElementById('userName').textContent = user.username;
-    document.getElementById('userRole').textContent = user.rol;
-    if (user.rol === 'admin') document.getElementById('navUsuarios').hidden = false;
-}
-
 document.getElementById('logoutLink').addEventListener('click', async (e) => {
     e.preventDefault();
     await logout();
-    window.location.href = 'login.html';
 });
 
 async function cargarSelects() {
@@ -44,16 +25,16 @@ async function cargarEtiquetas(gelas) {
     }
     tbody.innerHTML = etiquetas.map(et => `
         <tr data-id="${et.id}">
-            <td><strong>${escapeHtml(et.codigo)}</strong></td>
-            <td>${escapeHtml(et.equipo_nombre)}</td>
+            <td><strong>${escapeHtml(et.etiketa)}</strong></td>
+            <td>${escapeHtml(et.baliabide_izena)}</td>
             <td>
                 <select class="sel-gela-tabla" data-id="${et.id}">
                     <option value="">Gela gabe</option>
-                    ${gelas.map(g => `<option value="${g.id}" ${g.id == et.gela_id ? 'selected' : ''}>${escapeHtml(g.nombre)}</option>`).join('')}
+                    ${gelas.map(g => `<option value="${g.id}" ${g.id == et.gelaId ? 'selected' : ''}>${escapeHtml(g.nombre)}</option>`).join('')}
                 </select>
             </td>
-            <td>${et.fecha_alta || '—'}</td>
-            <td style="text-align:right"><button class="btn btn-danger" data-action="baja">Ezabatu</button></td>
+            <td>${et.erosketa_data || '—'}</td>
+            <td style="text-align:right"><button type="button" class="btn btn-danger" data-action="baja">Ezabatu</button></td>
         </tr>
     `).join('');
 }
@@ -61,10 +42,13 @@ async function cargarEtiquetas(gelas) {
 tbody.addEventListener('change', async (e) => {
     if (!e.target.classList.contains('sel-gela-tabla')) return;
     const id = e.target.dataset.id;
+    const val = e.target.value;
     try {
-        await api.patch(`/etiquetas/${id}/ubicacion`, { gela_id: Number(e.target.value) });
+        await api.patch(`/etiquetas/${id}/ubicacion`, { gelaId: val ? Number(val) : null });
         showToast('Kokapena ongi eguneratu da', 'success');
-    } catch (err) { showToast(err.message, 'error'); }
+    } catch (err) {
+        showToast(err.message, 'error');
+    }
 });
 
 tbody.addEventListener('click', async (e) => {
@@ -77,7 +61,9 @@ tbody.addEventListener('click', async (e) => {
         const gelas = await cargarSelects();
         await cargarEtiquetas(gelas);
         showToast('Etiketa ongi ezabatu da', 'success');
-    } catch (err) { showToast(err.message, 'error'); }
+    } catch (err) {
+        showToast(err.message, 'error');
+    }
 });
 
 document.getElementById('btnNuevaEtiqueta').addEventListener('click', () => {
@@ -85,28 +71,40 @@ document.getElementById('btnNuevaEtiqueta').addEventListener('click', () => {
     formCard.style.display = 'block';
 });
 
-document.getElementById('btnCancelarEtiqueta').addEventListener('click', () => formCard.style.display = 'none');
+document.getElementById('btnCancelarEtiqueta').addEventListener('click', () => {
+    formCard.style.display = 'none';
+});
 
 document.getElementById('etiquetaForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const codigoEl = document.getElementById('codigo');
-    if (!validateRequired(codigoEl) || !validateSelect(selEquipo) || !validateSelect(selGela)) return;
+    const okCodigo = validateRequired(codigoEl);
+    const okEquipo = validateSelect(selEquipo);
+    const okGela = validateSelect(selGela);
+    if (!(okCodigo && okEquipo && okGela)) return;
 
     try {
         await api.post('/etiquetas', {
-            codigo: codigoEl.value.trim(),
-            equipo_id: Number(selEquipo.value),
-            gela_id: Number(selGela.value)
+            etiketa: codigoEl.value.trim(),
+            baliabideId: Number(selEquipo.value),
+            gelaId: Number(selGela.value)
         });
         formCard.style.display = 'none';
         const gelas = await cargarSelects();
         await cargarEtiquetas(gelas);
         showToast('Etiketa ongi sortu da', 'success');
-    } catch (err) { showToast(err.message, 'error'); }
+    } catch (err) {
+        showToast(err.message, 'error');
+    }
 });
 
 (async function start() {
-    await initSesion();
-    const gelas = await cargarSelects();
-    await cargarEtiquetas(gelas);
+    const user = await initSesion();
+    if (!user) return;
+    try {
+        const gelas = await cargarSelects();
+        await cargarEtiquetas(gelas);
+    } catch (err) {
+        showToast(err.message, 'error');
+    }
 })();

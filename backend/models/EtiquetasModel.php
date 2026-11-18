@@ -50,10 +50,10 @@ class EtiquetasModel
         try {
             $stmt = $this->pdo->prepare('INSERT INTO gailuak (baliabideId, etiketa, erosketaData, egoera) VALUES (:baliabideId, :etiketa, :erosketaData, :egoera)');
             $stmt->execute([
-                'baliabideId' => $d['baliabideId'],
-                'etiketa'     => $d['etiketa'],
-                'erosketaData'=> $d['erosketaData'] ?? null,
-                'egoera'      => $d['egoera'] ?? 'Operatiboa',
+                'baliabideId'  => $d['baliabideId'],
+                'etiketa'      => $d['etiketa'],
+                'erosketaData' => $d['erosketaData'] ?? null,
+                'egoera'       => $d['egoera'] ?? 'Operatiboa',
             ]);
             $gailuId = (int)$this->pdo->lastInsertId();
 
@@ -62,10 +62,10 @@ class EtiquetasModel
                 $erabiltzaileId = $user['id'] ?? 1;
                 $stmtM = $this->pdo->prepare('INSERT INTO mugimenduak (gelaId, gailuId, erabiltzaileId, hasieraData) VALUES (:gelaId, :gailuId, :erabiltzaileId, :hasieraData)');
                 $stmtM->execute([
-                    'gelaId'        => $d['gelaId'],
-                    'gailuId'       => $gailuId,
-                    'erabiltzaileId'=> $erabiltzaileId,
-                    'hasieraData'   => $d['erosketaData'] ?? date('Y-m-d'),
+                    'gelaId'         => $d['gelaId'],
+                    'gailuId'        => $gailuId,
+                    'erabiltzaileId' => $erabiltzaileId,
+                    'hasieraData'    => $d['erosketaData'] ?? date('Y-m-d'),
                 ]);
             }
 
@@ -79,8 +79,20 @@ class EtiquetasModel
 
     public function delete(int $id): bool
     {
-        $stmt = $this->pdo->prepare('DELETE FROM gailuak WHERE id = ?');
-        return $stmt->execute([$id]);
+        $this->pdo->beginTransaction();
+        try {
+            $stmtM = $this->pdo->prepare('DELETE FROM mugimenduak WHERE gailuId = ?');
+            $stmtM->execute([$id]);
+
+            $stmt = $this->pdo->prepare('DELETE FROM gailuak WHERE id = ?');
+            $ok = $stmt->execute([$id]);
+
+            $this->pdo->commit();
+            return $ok;
+        } catch (Throwable $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
     }
 
     public function move(array $d): bool
@@ -89,20 +101,20 @@ class EtiquetasModel
         try {
             // Cerrar movimiento activo
             $stmtClose = $this->pdo->prepare('UPDATE mugimenduak SET amaieraData = CURDATE() WHERE gailuId = :gailuId AND amaieraData IS NULL');
-            $stmtClose->execute([
-                'gailuId' => $d['gailuId'],
-            ]);
+            $stmtClose->execute(['gailuId' => $d['gailuId']]);
 
-            // Crear nuevo movimiento
-            $user = $_SESSION['user'] ?? null;
-            $erabiltzaileId = $user['id'] ?? 1;
-            $stmtNew = $this->pdo->prepare('INSERT INTO mugimenduak (gelaId, gailuId, erabiltzaileId, hasieraData) VALUES (:gelaId, :gailuId, :erabiltzaileId, :hasieraData)');
-            $stmtNew->execute([
-                'gelaId'         => $d['gelaId'],
-                'gailuId'        => $d['gailuId'],
-                'erabiltzaileId' => $erabiltzaileId,
-                'hasieraData'    => $d['hasieraData'] ?? date('Y-m-d'),
-            ]);
+            // Crear nuevo movimiento solo si se selecciona una gela (si es null, queda "Gela gabe")
+            if (!empty($d['gelaId'])) {
+                $user = $_SESSION['user'] ?? null;
+                $erabiltzaileId = $user['id'] ?? 1;
+                $stmtNew = $this->pdo->prepare('INSERT INTO mugimenduak (gelaId, gailuId, erabiltzaileId, hasieraData) VALUES (:gelaId, :gailuId, :erabiltzaileId, :hasieraData)');
+                $stmtNew->execute([
+                    'gelaId'         => $d['gelaId'],
+                    'gailuId'        => $d['gailuId'],
+                    'erabiltzaileId' => $erabiltzaileId,
+                    'hasieraData'    => $d['hasieraData'] ?? date('Y-m-d'),
+                ]);
+            }
 
             $this->pdo->commit();
             return true;

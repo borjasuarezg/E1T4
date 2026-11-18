@@ -15,12 +15,13 @@ class ComprasModel
     public function getAll(): array
     {
         $stmt = $this->pdo->query(
-            'SELECT b.id AS equipo_id, b.izena AS equipo_nombre, g.erosketaData AS fecha_compra, COUNT(g.id) AS cantidad
+            "SELECT b.id AS equipo_id, b.izena AS equipo_nombre,
+                    COALESCE(CAST(g.erosketaData AS CHAR), '—') AS fecha_compra,
+                    COUNT(g.id) AS cantidad
              FROM gailuak g
              JOIN baliabideak b ON b.id = g.baliabideId
-             WHERE g.erosketaData IS NOT NULL
              GROUP BY b.id, b.izena, g.erosketaData
-             ORDER BY g.erosketaData DESC'
+             ORDER BY g.erosketaData DESC"
         );
         return $stmt->fetchAll();
     }

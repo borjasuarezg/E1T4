@@ -1,31 +1,12 @@
-/**
- * Módulo: equipos.js
- * Web cliente para gestión de equipos.
- * Usa funciones globales de base.js: initSesion, escapeHtml, logout, validate*, showToast, setFieldState
- */
-
 const tbody = document.getElementById('tbodyEquipos');
 const formCard = document.getElementById('formEquipo');
 const equipoForm = document.getElementById('equipoForm');
 const formTitulo = document.getElementById('formTitulo');
 const selCategoria = document.getElementById('categoria_id');
 
-function escapeHtml(str) {
-    return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-async function initSesion() {
-    const { user } = await api.get('/auth/me');
-    if (!user) { window.location.href = 'login.html'; return; }
-    document.getElementById('userName').textContent = user.username;
-    document.getElementById('userRole').textContent = user.rol;
-    if (user.rol === 'admin') document.getElementById('navUsuarios').hidden = false;
-}
-
 document.getElementById('logoutLink').addEventListener('click', async (e) => {
     e.preventDefault();
     await logout();
-    window.location.href = 'login.html';
 });
 
 async function cargarCategorias() {
@@ -47,8 +28,8 @@ async function cargarEquipos() {
             <td>${escapeHtml(eq.categoria_nombre || '—')}</td>
             <td><span class="badge">${eq.stock} unitez</span></td>
             <td style="text-align:right">
-                <button class="btn btn-ghost" data-action="editar">Editatu</button>
-                <button class="btn btn-danger" data-action="ezabatu">Ezabatu</button>
+                <button type="button" class="btn btn-ghost" data-action="editar">Editatu</button>
+                <button type="button" class="btn btn-danger" data-action="ezabatu">Ezabatu</button>
             </td>
         </tr>
     `).join('');
@@ -62,7 +43,9 @@ document.getElementById('btnNuevo').addEventListener('click', () => {
     document.getElementById('nombre').focus();
 });
 
-document.getElementById('btnCancelar').addEventListener('click', () => formCard.style.display = 'none');
+document.getElementById('btnCancelar').addEventListener('click', () => {
+    formCard.style.display = 'none';
+});
 
 tbody.addEventListener('click', async (e) => {
     const btn = e.target.closest('button');
@@ -75,13 +58,14 @@ tbody.addEventListener('click', async (e) => {
             await api.delete(`/equipos/${id}`);
             showToast('Ekipoa ezabatu da', 'success');
             await cargarEquipos();
-        } catch (err) { showToast(err.message, 'error'); }
+        } catch (err) {
+            showToast(err.message, 'error');
+        }
     }
 
     if (btn.dataset.action === 'editar') {
         try {
             const eq = await api.get(`/equipos/${id}`);
-
             document.getElementById('equipoId').value = eq.id || '';
             document.getElementById('nombre').value = eq.nombre || '';
             document.getElementById('marca').value = eq.marca || '';
@@ -90,14 +74,18 @@ tbody.addEventListener('click', async (e) => {
             selCategoria.value = eq.categoria_id || '';
             formTitulo.textContent = 'Ekipoa editatu';
             formCard.style.display = 'block';
-        } catch (err) { showToast(err.message, 'error'); }
+        } catch (err) {
+            showToast(err.message, 'error');
+        }
     }
 });
 
 equipoForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const nombreEl = document.getElementById('nombre');
-    if (!validateRequired(nombreEl) || !validateSelect(selCategoria)) return;
+    const okNombre = validateRequired(nombreEl);
+    const okCat = validateSelect(selCategoria);
+    if (!(okNombre && okCat)) return;
 
     const payload = {
         nombre: nombreEl.value.trim(),
@@ -118,11 +106,18 @@ equipoForm.addEventListener('submit', async (e) => {
         }
         formCard.style.display = 'none';
         await cargarEquipos();
-    } catch (err) { showToast(err.message, 'error'); }
+    } catch (err) {
+        showToast(err.message, 'error');
+    }
 });
 
 (async function start() {
-    await initSesion();
-    await cargarCategorias();
-    await cargarEquipos();
+    const user = await initSesion();
+    if (!user) return;
+    try {
+        await cargarCategorias();
+        await cargarEquipos();
+    } catch (err) {
+        showToast(err.message, 'error');
+    }
 })();

@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ekipamendua — Inbentarioa</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="js/toast.js" defer></script>
+<link rel="stylesheet" href="css/style.css">
+<script src="js/toast.js" defer></script>
 </head>
 <body>
 <div class="app">
@@ -28,7 +28,7 @@
   <main>
     <div class="page-head">
       <div><h2>Ekipamendua</h2><p>Mintegiko materialaren katalogoa eta stock-a</p></div>
-      <button class="btn btn-amber" id="btnNuevo">+ Ekipo berria</button>
+      <button type="button" class="btn btn-amber" id="btnNuevo">+ Ekipo berria</button>
     </div>
 
     <table class="inventory">
@@ -44,10 +44,18 @@
       <h3 id="formTitulo" style="margin-top:0">Ekipo berria</h3>
       <form id="equipoForm" novalidate>
         <input type="hidden" id="equipoId">
-        <div class="field"><label for="nombre">Izena *</label><input type="text" id="nombre" required></div>
+        <div class="field">
+          <label for="nombre">Izena *</label>
+          <input type="text" id="nombre" required>
+          <div class="error">Izena beharrezkoa da.</div>
+        </div>
         <div class="field"><label for="marca">Marka</label><input type="text" id="marca"></div>
         <div class="field"><label for="modelo">Modeloa</label><input type="text" id="modelo"></div>
-        <div class="field"><label for="categoria_id">Kategoria *</label><select id="categoria_id" required></select></div>
+        <div class="field">
+          <label for="categoria_id">Kategoria *</label>
+          <select id="categoria_id" required></select>
+          <div class="error">Kategoria bat aukeratu behar duzu.</div>
+        </div>
         <div class="field"><label for="descripcion">Deskribapena</label><textarea id="descripcion" rows="3"></textarea></div>
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">Gorde</button>

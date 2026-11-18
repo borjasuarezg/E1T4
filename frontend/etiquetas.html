@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Etiketak — Inbentarioa</title>
 <link rel="stylesheet" href="css/style.css">
-    <script src="js/toast.js" defer></script>
+<script src="js/toast.js" defer></script>
 </head>
 <body>
 <div class="app">
@@ -15,6 +15,7 @@
       <a href="index.html">Ekipamendua</a>
       <a href="etiquetas.html" class="active">Etiketak</a>
       <a href="gelas.html">Gelak</a>
+      <a href="compras.html">Erosketak</a>
       <a href="usuarios.html" id="navUsuarios" hidden>Erabiltzaileak</a>
     </nav>
     <div class="user-box" id="userBox">
@@ -27,7 +28,7 @@
   <main>
     <div class="page-head">
       <div><h2>Etiketak / Gailuak</h2><p>Inbentariatutako unitateak eta haien uneko gela</p></div>
-      <button class="btn btn-amber" id="btnNuevaEtiqueta">+ Unitatea inbentariatu</button>
+      <button type="button" class="btn btn-amber" id="btnNuevaEtiqueta">+ Unitatea inbentariatu</button>
     </div>
 
     <table class="inventory">
@@ -42,9 +43,21 @@
     <div class="form-card" id="formEtiqueta" style="display:none; margin-top:24px;">
       <h3 style="margin-top:0">Unitate berria</h3>
       <form id="etiquetaForm" novalidate>
-        <div class="field"><label for="codigo">Etiketaren kodea *</label><input type="text" id="codigo" required></div>
-        <div class="field"><label for="equipo_id">Ekipo mota *</label><select id="equipo_id" required></select></div>
-        <div class="field"><label for="gela_id">Hasierako gela *</label><select id="gela_id" required></select></div>
+        <div class="field">
+          <label for="codigo">Etiketaren kodea *</label>
+          <input type="text" id="codigo" required>
+          <div class="error">Etiketaren kodea beharrezkoa da.</div>
+        </div>
+        <div class="field">
+          <label for="equipo_id">Ekipo mota *</label>
+          <select id="equipo_id" required></select>
+          <div class="error">Ekipo mota aukeratu behar duzu.</div>
+        </div>
+        <div class="field">
+          <label for="gela_id">Hasierako gela *</label>
+          <select id="gela_id" required></select>
+          <div class="error">Hasierako gela aukeratu behar duzu.</div>
+        </div>
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">Gorde</button>
           <button type="button" class="btn btn-ghost" id="btnCancelarEtiqueta">Utzi</button>

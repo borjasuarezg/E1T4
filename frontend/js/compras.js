@@ -1,30 +1,11 @@
-/**
- * Módulo: compras.js
- * Web cliente para gestión de compras e inventario.
- * Usa funciones globales de base.js: initSesion, escapeHtml, logout, validate*, showToast
- */
-
 const tbody = document.getElementById('tbodyCompras');
 const formCard = document.getElementById('formCompra');
 const selEquipo = document.getElementById('equipo_id');
 
-async function initSesion() {
-    const { user } = await api.get('/auth/me');
-    if (!user) { window.location.href = 'login.html'; return; }
-    document.getElementById('userName').textContent = user.username;
-    document.getElementById('userRole').textContent = user.rol;
-    if (user.rol === 'admin') document.getElementById('navUsuarios').hidden = false;
-}
-
 document.getElementById('logoutLink').addEventListener('click', async (e) => {
     e.preventDefault();
     await logout();
-    window.location.href = 'login.html';
 });
-
-function escapeHtml(str) {
-    return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
 
 async function cargarEquiposSelect() {
     const equipos = await api.get('/equipos');
@@ -47,7 +28,9 @@ document.getElementById('btnNuevaCompra').addEventListener('click', () => {
     formCard.style.display = 'block';
 });
 
-document.getElementById('btnCancelarCompra').addEventListener('click', () => formCard.style.display = 'none');
+document.getElementById('btnCancelarCompra').addEventListener('click', () => {
+    formCard.style.display = 'none';
+});
 
 document.getElementById('compraForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -68,11 +51,18 @@ document.getElementById('compraForm').addEventListener('submit', async (e) => {
         formCard.style.display = 'none';
         await cargarCompras();
         showToast('Erosketa ongi erregistratu da', 'success');
-    } catch (err) { showToast(err.message, 'error'); }
+    } catch (err) {
+        showToast(err.message, 'error');
+    }
 });
 
 (async function start() {
-    await initSesion();
-    await cargarEquiposSelect();
-    await cargarCompras();
+    const user = await initSesion();
+    if (!user) return;
+    try {
+        await cargarEquiposSelect();
+        await cargarCompras();
+    } catch (err) {
+        showToast(err.message, 'error');
+    }
 })();

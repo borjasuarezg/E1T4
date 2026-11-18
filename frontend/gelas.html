@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gelak — Inbentarioa</title>
 <link rel="stylesheet" href="css/style.css">
-    <script src="js/base.js"></script><script src="js/toast.js" defer></script>
+<script src="js/toast.js" defer></script>
 </head>
 <body>
 <div class="app">
@@ -28,7 +28,7 @@
   <main>
     <div class="page-head">
       <div><h2>Gelak</h2><p>Ikasgelak eta espazioak</p></div>
-      <button class="btn btn-amber" id="btnNuevaGela">+ Gela berria</button>
+      <button type="button" class="btn btn-amber" id="btnNuevaGela">+ Gela berria</button>
     </div>
 
     <table class="inventory">
@@ -39,7 +39,11 @@
     <div class="form-card" id="formGela" style="display:none; margin-top:24px;">
       <h3 style="margin-top:0">Gela berria</h3>
       <form id="gelaForm" novalidate>
-        <div class="field"><label for="nombre">Izena *</label><input type="text" id="nombre" required></div>
+        <div class="field">
+          <label for="nombre">Izena *</label>
+          <input type="text" id="nombre" required>
+          <div class="error">Gelaren izena beharrezkoa da.</div>
+        </div>
         <div class="field"><label for="taldea">Taldea</label><input type="text" id="taldea"></div>
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">Gorde</button>
@@ -49,6 +53,7 @@
     </div>
   </main>
 </div>
+<script src="js/base.js"></script>
 <script src="js/api.js"></script>
 <script src="js/validate.js"></script>
 <script src="js/gelas.js"></script>
