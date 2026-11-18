@@ -1,10 +1,35 @@
-const tbody = document.getElementById('tbodyUsuarios');
+const vistaListado = document.getElementById('vistaListado');
+const vistaFormulario = document.getElementById('vistaFormulario');
 const formCard = document.getElementById('formUsuario');
+const tbody = document.getElementById('tbodyUsuarios');
+const usuarioForm = document.getElementById('usuarioForm');
 
 document.getElementById('logoutLink').addEventListener('click', async (e) => {
     e.preventDefault();
     await logout();
 });
+
+function abrirFormulario() {
+    usuarioForm.reset();
+    usuarioForm.querySelectorAll('.field.invalid').forEach(f => f.classList.remove('invalid'));
+    if (vistaListado) vistaListado.hidden = true;
+    const destino = vistaFormulario || formCard;
+    if (destino) {
+        destino.hidden = false;
+        destino.style.display = 'block';
+        destino.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    document.getElementById('username').focus({ preventScroll: true });
+}
+
+function cerrarFormulario() {
+    const destino = vistaFormulario || formCard;
+    if (destino) {
+        destino.hidden = true;
+        destino.style.display = 'none';
+    }
+    if (vistaListado) vistaListado.hidden = false;
+}
 
 async function cargarUsuarios() {
     const usuarios = await api.get('/usuarios');
@@ -34,16 +59,10 @@ tbody.addEventListener('click', async (e) => {
     }
 });
 
-document.getElementById('btnNuevoUsuario').addEventListener('click', () => {
-    document.getElementById('usuarioForm').reset();
-    formCard.style.display = 'block';
-});
+document.getElementById('btnNuevoUsuario').addEventListener('click', abrirFormulario);
+document.getElementById('btnCancelarUsuario').addEventListener('click', cerrarFormulario);
 
-document.getElementById('btnCancelarUsuario').addEventListener('click', () => {
-    formCard.style.display = 'none';
-});
-
-document.getElementById('usuarioForm').addEventListener('submit', async (e) => {
+usuarioForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const usernameEl = document.getElementById('username');
     const passwordEl = document.getElementById('password');
@@ -58,7 +77,7 @@ document.getElementById('usuarioForm').addEventListener('submit', async (e) => {
             password: passwordEl.value,
             rol: document.getElementById('rol').value
         });
-        formCard.style.display = 'none';
+        cerrarFormulario();
         await cargarUsuarios();
         showToast('Erabiltzailea ongi sortu da', 'success');
     } catch (err) {

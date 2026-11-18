@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Erosketak — Inbentario eraginkorra</title>
 <link rel="stylesheet" href="css/style.css">
-    <script src="js/toast.js" defer></script>
+<script src="js/toast.js" defer></script>
 </head>
 <body>
 <div class="app">
@@ -26,36 +26,64 @@
   </aside>
 
   <main>
-    <div class="page-head">
-      <div><h2>Erosketak</h2><p>Erosketa-data gordetzen du eta stock-a automatikoki eguneratzen du</p></div>
-      <button class="btn btn-amber" id="btnNuevaCompra">+ Erosketa berria</button>
+    <!-- VISTA 1: LISTADO -->
+    <div id="vistaListado">
+      <div class="page-head">
+        <div>
+          <h2>Erosketak</h2>
+          <p>Erosketa-data gordetzen du eta stock-a automatikoki eguneratzen du</p>
+        </div>
+        <button type="button" class="btn btn-amber" id="btnNuevaCompra">+ Erosketa berria</button>
+      </div>
+      <table class="inventory">
+        <thead>
+          <tr>
+            <th>Ekipoa</th>
+            <th>Data</th>
+            <th>Kantitatea</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyCompras">
+          <tr><td colspan="3" style="color:var(--text-mute)">Kargatzen…</td></tr>
+        </tbody>
+      </table>
     </div>
 
-    <table class="inventory">
-      <thead><tr><th>Ekipoa</th><th>Data</th><th>Kantitatea</th></tr></thead>
-      <tbody id="tbodyCompras"><tr><td colspan="3" style="color:var(--text-mute)">Kargatzen…</td></tr></tbody>
-    </table>
-
-    <div class="form-card" id="formCompra" style="display:none; margin-top:24px;">
-      <h3 style="margin-top:0">Erosketa berria</h3>
-      <form id="compraForm" novalidate>
-        <div class="field" id="f_equipo"><label for="equipo_id">Ekipoa *</label>
-          <select id="equipo_id" required></select>
-          <div class="error">Ekipo bat aukeratu behar duzu (ez badago katalogoan, lehenengo sortu Ekipamendua atalean).</div></div>
-        <div class="field" id="f_fecha"><label for="fecha_compra">Erosketa data *</label>
-          <input type="date" id="fecha_compra" required>
-          <div class="error">Data beharrezkoa da.</div></div>
-        <div class="field" id="f_cantidad"><label for="cantidad">Kantitatea *</label>
-          <input type="number" id="cantidad" min="1" step="1" required>
-          <div class="error">Kantitateak 1 baino handiagoa izan behar du.</div></div>
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Gorde</button>
-          <button type="button" class="btn btn-ghost" id="btnCancelarCompra">Utzi</button>
+    <!-- VISTA 2: FORMULARIO (oculta al cargar) -->
+    <div id="vistaFormulario" hidden>
+      <div class="page-head">
+        <div>
+          <h2>Erosketa berria</h2>
+          <p>Erosketa-data gordetzen du eta stock-a automatikoki eguneratzen du</p>
         </div>
-      </form>
+      </div>
+      <div class="form-card">
+        <form id="compraForm" novalidate>
+          <div class="field" id="f_equipo">
+            <label for="equipo_id">Ekipoa *</label>
+            <select id="equipo_id" required></select>
+            <div class="error">Ekipo bat aukeratu behar duzu (ez badago katalogoan, lehenengo sortu Ekipamendua atalean).</div>
+          </div>
+          <div class="field" id="f_fecha">
+            <label for="fecha_compra">Erosketa data *</label>
+            <input type="date" id="fecha_compra" required>
+            <div class="error">Data beharrezkoa da.</div>
+          </div>
+          <div class="field" id="f_cantidad">
+            <label for="cantidad">Kantitatea *</label>
+            <input type="number" id="cantidad" min="1" step="1" required>
+            <div class="error">Kantitateak 1 baino handiagoa izan behar du.</div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="btnGuardar">Gorde</button>
+            <button type="button" class="btn btn-ghost" id="btnCancelar">Utzi</button>
+          </div>
+        </form>
+      </div>
     </div>
   </main>
 </div>
+
 <script src="js/base.js"></script>
 <script src="js/api.js"></script>
 <script src="js/compras.js"></script>

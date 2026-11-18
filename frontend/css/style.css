@@ -1,24 +1,12 @@
-/* =====================================================================
-   INBENTARIO ERAGINKORRA — hoja de estilos
-   -----------------------------------------------------------------------
-   Dirección de diseño: inventario/etiquetado físico de un taller de
-   informática. La paleta se apoya en el color de las etiquetas de
-   activo (ámbar) sobre un tono tinta casi-negro, con una tipografía
-   monoespaciada para códigos de etiqueta/stock (igual que en un
-   listado de almacén) y una sans para el resto de la interfaz.
-   ===================================================================== */
-
-
 :root {
-    /* Paleta */
-    --ink:        #161B22;   /* casi negro, con matiz azulado */
+    --ink:        #161B22;
     --ink-soft:   #232B36;
-    --paper:      #ECE9E2;   /* fondo principal, gris cálido */
+    --paper:      #ECE9E2;
     --paper-card: #F7F5F0;
     --line:       #D8D4C9;
-    --amber:      #E2A63B;   /* color de etiqueta física */
+    --amber:      #E2A63B;
     --amber-dark: #B87F1E;
-    --teal:       #3E7C74;   /* acento secundario (marca Santurtzi) */
+    --teal:       #3E7C74;
     --red:        #B0402E;
     --text:       #1B2027;
     --text-mute:  #5B6270;
@@ -32,6 +20,8 @@
 }
 
 * { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
 
 html, body {
     margin: 0;
@@ -47,7 +37,6 @@ html, body {
 
 a { color: var(--teal); }
 
-/* ---------- Layout general: sidebar + contenido ---------- */
 .app {
     display: grid;
     grid-template-columns: 240px 1fr;
@@ -121,7 +110,6 @@ a { color: var(--teal); }
     color: var(--amber);
 }
 
-/* ---------- Contenido principal ---------- */
 main {
     padding: 32px 40px;
 }
@@ -155,7 +143,6 @@ main {
 .btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red); transition: background 150ms ease; }
 .btn-danger:hover { background: rgba(176,64,46,0.08); }
 
-/* ---------- Tabla estilo "listado de almacén" ---------- */
 table.inventory {
     width: 100%;
     border-collapse: collapse;
@@ -198,7 +185,6 @@ table.inventory tbody tr:hover { background: #F1EEE6; }
 .badge.stock-ok   { border-color: var(--teal); color: var(--teal); }
 .badge.stock-low  { border-color: var(--red); color: var(--red); }
 
-/* ---------- Formularios ---------- */
 .form-card {
     background: var(--paper-card);
     border: 1px solid var(--line);
@@ -238,7 +224,6 @@ table.inventory tbody tr:hover { background: #F1EEE6; }
 
 .form-actions { display: flex; gap: 10px; margin-top: 20px; }
 
-/* ---------- Login ---------- */
 .login-screen {
     min-height: 100vh;
     display: flex;
@@ -262,7 +247,6 @@ table.inventory tbody tr:hover { background: #F1EEE6; }
     padding: 8px 12px; border-radius: var(--radius); margin-bottom: 16px; display: none;
 }
 
-/* Accesibilidad: foco visible siempre */
 a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
     outline: 2px solid var(--amber);
     outline-offset: 2px;

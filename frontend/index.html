@@ -26,42 +26,42 @@
   </aside>
 
   <main>
-    <div class="page-head">
-      <div><h2>Ekipamendua</h2><p>Mintegiko materialaren katalogoa eta stock-a</p></div>
-      <button type="button" class="btn btn-amber" id="btnNuevo">+ Ekipo berria</button>
+    <!-- VISTA 1: LISTADO -->
+    <div id="vistaListado">
+      <div class="page-head">
+        <div><h2>Ekipamendua</h2><p>Mintegiko materialaren katalogoa eta stock-a</p></div>
+        <button type="button" class="btn btn-amber" id="btnNuevo">+ Ekipo berria</button>
+      </div>
+
+      <table class="inventory">
+        <thead>
+          <tr><th>Izena</th><th>Marka / Modeloa</th><th>Kategoria</th><th>Stock (Gailuak)</th><th>Akzioak</th></tr>
+        </thead>
+        <tbody id="tbodyEquipos">
+          <tr><td colspan="5" style="color:var(--text-mute)">Kargatzen…</td></tr>
+        </tbody>
+      </table>
     </div>
 
-    <table class="inventory">
-      <thead>
-        <tr><th>Izena</th><th>Marka / Modeloa</th><th>Kategoria</th><th>Stock (Gailuak)</th><th>Akzioak</th></tr>
-      </thead>
-      <tbody id="tbodyEquipos">
-        <tr><td colspan="5" style="color:var(--text-mute)">Kargatzen…</td></tr>
-      </tbody>
-    </table>
-
-    <div class="form-card" id="formEquipo" style="display:none; margin-top:24px;">
-      <h3 id="formTitulo" style="margin-top:0">Ekipo berria</h3>
-      <form id="equipoForm" novalidate>
-        <input type="hidden" id="equipoId">
-        <div class="field">
-          <label for="nombre">Izena *</label>
-          <input type="text" id="nombre" required>
-          <div class="error">Izena beharrezkoa da.</div>
-        </div>
-        <div class="field"><label for="marca">Marka</label><input type="text" id="marca"></div>
-        <div class="field"><label for="modelo">Modeloa</label><input type="text" id="modelo"></div>
-        <div class="field">
-          <label for="categoria_id">Kategoria *</label>
-          <select id="categoria_id" required></select>
-          <div class="error">Kategoria bat aukeratu behar duzu.</div>
-        </div>
-        <div class="field"><label for="descripcion">Deskribapena</label><textarea id="descripcion" rows="3"></textarea></div>
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Gorde</button>
-          <button type="button" class="btn btn-ghost" id="btnCancelar">Utzi</button>
-        </div>
-      </form>
+    <!-- VISTA 2: FORMULARIO -->
+    <div id="vistaFormulario" hidden>
+      <div class="page-head">
+        <div><h2 id="formTitulo">Ekipo berria</h2><p>Mintegiko materialaren katalogoa eta stock-a</p></div>
+      </div>
+      <div class="form-card" id="formEquipo">
+        <form id="equipoForm" novalidate>
+          <input type="hidden" id="equipoId">
+          <div class="field"><label for="nombre">Izena *</label><input type="text" id="nombre" required></div>
+          <div class="field"><label for="marca">Marka</label><input type="text" id="marca"></div>
+          <div class="field"><label for="modelo">Modeloa</label><input type="text" id="modelo"></div>
+          <div class="field"><label for="categoria_id">Kategoria *</label><select id="categoria_id" required></select></div>
+          <div class="field"><label for="descripcion">Deskribapena</label><textarea id="descripcion" rows="3"></textarea></div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Gorde</button>
+            <button type="button" class="btn btn-ghost" id="btnCancelar">Utzi</button>
+          </div>
+        </form>
+      </div>
     </div>
   </main>
 </div>

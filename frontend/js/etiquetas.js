@@ -1,5 +1,8 @@
-const tbody = document.getElementById('tbodyEtiquetas');
+const vistaListado = document.getElementById('vistaListado');
+const vistaFormulario = document.getElementById('vistaFormulario');
 const formCard = document.getElementById('formEtiqueta');
+const tbody = document.getElementById('tbodyEtiquetas');
+const etiquetaForm = document.getElementById('etiquetaForm');
 const selEquipo = document.getElementById('equipo_id');
 const selGela = document.getElementById('gela_id');
 
@@ -7,6 +10,28 @@ document.getElementById('logoutLink').addEventListener('click', async (e) => {
     e.preventDefault();
     await logout();
 });
+
+function abrirFormulario() {
+    etiquetaForm.reset();
+    etiquetaForm.querySelectorAll('.field.invalid').forEach(f => f.classList.remove('invalid'));
+    if (vistaListado) vistaListado.hidden = true;
+    const destino = vistaFormulario || formCard;
+    if (destino) {
+        destino.hidden = false;
+        destino.style.display = 'block';
+        destino.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    document.getElementById('codigo').focus({ preventScroll: true });
+}
+
+function cerrarFormulario() {
+    const destino = vistaFormulario || formCard;
+    if (destino) {
+        destino.hidden = true;
+        destino.style.display = 'none';
+    }
+    if (vistaListado) vistaListado.hidden = false;
+}
 
 async function cargarSelects() {
     const [equipos, gelas] = await Promise.all([api.get('/equipos'), api.get('/gelas')]);
@@ -23,28 +48,33 @@ async function cargarEtiquetas(gelas) {
         tbody.innerHTML = `<tr><td colspan="5" style="color:var(--text-mute)">Ez dago etiketarik.</td></tr>`;
         return;
     }
-    tbody.innerHTML = etiquetas.map(et => `
+    tbody.innerHTML = etiquetas.map(et => {
+        const codigo = et.etiketa ?? et.codigo ?? '';
+        const equipo = et.baliabide_izena ?? et.equipo_nombre ?? '—';
+        const gelaActual = et.gelaId ?? et.gela_id ?? '';
+        const fecha = et.erosketa_data ?? et.fecha_alta ?? '—';
+        return `
         <tr data-id="${et.id}">
-            <td><strong>${escapeHtml(et.etiketa)}</strong></td>
-            <td>${escapeHtml(et.baliabide_izena)}</td>
+            <td><strong>${escapeHtml(codigo)}</strong></td>
+            <td>${escapeHtml(equipo)}</td>
             <td>
                 <select class="sel-gela-tabla" data-id="${et.id}">
                     <option value="">Gela gabe</option>
-                    ${gelas.map(g => `<option value="${g.id}" ${g.id == et.gelaId ? 'selected' : ''}>${escapeHtml(g.nombre)}</option>`).join('')}
+                    ${gelas.map(g => `<option value="${g.id}" ${g.id == gelaActual ? 'selected' : ''}>${escapeHtml(g.nombre)}</option>`).join('')}
                 </select>
             </td>
-            <td>${et.erosketa_data || '—'}</td>
+            <td>${escapeHtml(fecha)}</td>
             <td style="text-align:right"><button type="button" class="btn btn-danger" data-action="baja">Ezabatu</button></td>
-        </tr>
-    `).join('');
+        </tr>`;
+    }).join('');
 }
 
 tbody.addEventListener('change', async (e) => {
     if (!e.target.classList.contains('sel-gela-tabla')) return;
     const id = e.target.dataset.id;
-    const val = e.target.value;
+    const gelaId = e.target.value ? Number(e.target.value) : null;
     try {
-        await api.patch(`/etiquetas/${id}/ubicacion`, { gelaId: val ? Number(val) : null });
+        await api.patch(`/etiquetas/${id}/ubicacion`, { gelaId });
         showToast('Kokapena ongi eguneratu da', 'success');
     } catch (err) {
         showToast(err.message, 'error');
@@ -66,22 +96,13 @@ tbody.addEventListener('click', async (e) => {
     }
 });
 
-document.getElementById('btnNuevaEtiqueta').addEventListener('click', () => {
-    document.getElementById('etiquetaForm').reset();
-    formCard.style.display = 'block';
-});
+document.getElementById('btnNuevaEtiqueta').addEventListener('click', abrirFormulario);
+document.getElementById('btnCancelarEtiqueta').addEventListener('click', cerrarFormulario);
 
-document.getElementById('btnCancelarEtiqueta').addEventListener('click', () => {
-    formCard.style.display = 'none';
-});
-
-document.getElementById('etiquetaForm').addEventListener('submit', async (e) => {
+etiquetaForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const codigoEl = document.getElementById('codigo');
-    const okCodigo = validateRequired(codigoEl);
-    const okEquipo = validateSelect(selEquipo);
-    const okGela = validateSelect(selGela);
-    if (!(okCodigo && okEquipo && okGela)) return;
+    if (!validateRequired(codigoEl) || !validateSelect(selEquipo) || !validateSelect(selGela)) return;
 
     try {
         await api.post('/etiquetas', {
@@ -89,7 +110,7 @@ document.getElementById('etiquetaForm').addEventListener('submit', async (e) => 
             baliabideId: Number(selEquipo.value),
             gelaId: Number(selGela.value)
         });
-        formCard.style.display = 'none';
+        cerrarFormulario();
         const gelas = await cargarSelects();
         await cargarEtiquetas(gelas);
         showToast('Etiketa ongi sortu da', 'success');

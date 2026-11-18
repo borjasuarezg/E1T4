@@ -1,13 +1,39 @@
+const vistaListado = document.getElementById('vistaListado');
+const vistaFormulario = document.getElementById('vistaFormulario');
 const tbody = document.getElementById('tbodyEquipos');
-const formCard = document.getElementById('formEquipo');
 const equipoForm = document.getElementById('equipoForm');
 const formTitulo = document.getElementById('formTitulo');
 const selCategoria = document.getElementById('categoria_id');
 
+function escapeHtml(str) {
+    return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+async function initSesion() {
+    const { user } = await api.get('/auth/me');
+    if (!user) { window.location.href = 'login.html'; return; }
+    document.getElementById('userName').textContent = user.username;
+    document.getElementById('userRole').textContent = user.rol;
+    if (user.rol === 'admin') document.getElementById('navUsuarios').hidden = false;
+}
+
 document.getElementById('logoutLink').addEventListener('click', async (e) => {
     e.preventDefault();
     await logout();
+    window.location.href = 'login.html';
 });
+
+function abrirFormulario(titulo = 'Ekipo berria') {
+    formTitulo.textContent = titulo;
+    equipoForm.querySelectorAll('.field.invalid').forEach(f => f.classList.remove('invalid'));
+    vistaListado.hidden = true;
+    vistaFormulario.hidden = false;
+}
+
+function cerrarFormulario() {
+    vistaFormulario.hidden = true;
+    vistaListado.hidden = false;
+}
 
 async function cargarCategorias() {
     const cats = await api.get('/categorias');
@@ -28,8 +54,8 @@ async function cargarEquipos() {
             <td>${escapeHtml(eq.categoria_nombre || '—')}</td>
             <td><span class="badge">${eq.stock} unitez</span></td>
             <td style="text-align:right">
-                <button type="button" class="btn btn-ghost" data-action="editar">Editatu</button>
-                <button type="button" class="btn btn-danger" data-action="ezabatu">Ezabatu</button>
+                <button class="btn btn-ghost" data-action="editar">Editatu</button>
+                <button class="btn btn-danger" data-action="ezabatu">Ezabatu</button>
             </td>
         </tr>
     `).join('');
@@ -38,14 +64,11 @@ async function cargarEquipos() {
 document.getElementById('btnNuevo').addEventListener('click', () => {
     equipoForm.reset();
     document.getElementById('equipoId').value = '';
-    formTitulo.textContent = 'Ekipo berria';
-    formCard.style.display = 'block';
+    abrirFormulario('Ekipo berria');
     document.getElementById('nombre').focus();
 });
 
-document.getElementById('btnCancelar').addEventListener('click', () => {
-    formCard.style.display = 'none';
-});
+document.getElementById('btnCancelar').addEventListener('click', cerrarFormulario);
 
 tbody.addEventListener('click', async (e) => {
     const btn = e.target.closest('button');
@@ -58,9 +81,7 @@ tbody.addEventListener('click', async (e) => {
             await api.delete(`/equipos/${id}`);
             showToast('Ekipoa ezabatu da', 'success');
             await cargarEquipos();
-        } catch (err) {
-            showToast(err.message, 'error');
-        }
+        } catch (err) { showToast(err.message, 'error'); }
     }
 
     if (btn.dataset.action === 'editar') {
@@ -72,20 +93,15 @@ tbody.addEventListener('click', async (e) => {
             document.getElementById('modelo').value = eq.modelo || '';
             document.getElementById('descripcion').value = eq.deskribapena || '';
             selCategoria.value = eq.categoria_id || '';
-            formTitulo.textContent = 'Ekipoa editatu';
-            formCard.style.display = 'block';
-        } catch (err) {
-            showToast(err.message, 'error');
-        }
+            abrirFormulario('Ekipoa editatu');
+        } catch (err) { showToast(err.message, 'error'); }
     }
 });
 
 equipoForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const nombreEl = document.getElementById('nombre');
-    const okNombre = validateRequired(nombreEl);
-    const okCat = validateSelect(selCategoria);
-    if (!(okNombre && okCat)) return;
+    if (!validateRequired(nombreEl) || !validateSelect(selCategoria)) return;
 
     const payload = {
         nombre: nombreEl.value.trim(),
@@ -104,20 +120,13 @@ equipoForm.addEventListener('submit', async (e) => {
             await api.post('/equipos', payload);
             showToast('Ekipoa ongi sortu da', 'success');
         }
-        formCard.style.display = 'none';
+        cerrarFormulario();
         await cargarEquipos();
-    } catch (err) {
-        showToast(err.message, 'error');
-    }
+    } catch (err) { showToast(err.message, 'error'); }
 });
 
 (async function start() {
-    const user = await initSesion();
-    if (!user) return;
-    try {
-        await cargarCategorias();
-        await cargarEquipos();
-    } catch (err) {
-        showToast(err.message, 'error');
-    }
+    await initSesion();
+    await cargarCategorias();
+    await cargarEquipos();
 })();
