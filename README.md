@@ -12,8 +12,6 @@ hedapen (Apache, FTP, SSH, MariaDB, scripts).
 
 ```
 inventario/
-├ database/
-│   └── schema.sql              # BDaren diseinu osoa (taulak, FK, trigger, view)
 ├ backend/
 │   ├── config.php              # DB konexioaren datuak
 │   ├── db.php                  # PDO konexioa
