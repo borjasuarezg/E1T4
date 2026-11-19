@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../db.php';
 
-class UsuariosModel
+class ErabiltzaileakEredua
 {
     private PDO $pdo;
 

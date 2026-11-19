@@ -1,31 +1,31 @@
 <?php
 
-require_once __DIR__ . '/../models/UsuariosModel.php';
+require_once __DIR__ . '/../ereduak/ErabiltzaileakEredua.php';
 require_once __DIR__ . '/../helpers.php';
 require_once __DIR__ . '/../auth.php';
 
-class UsuariosController
+class ErabiltzaileakKontroladorea
 {
-    private UsuariosModel $model;
+    private ErabiltzaileakEredua $model;
 
     public function __construct(PDO $pdo)
     {
-        $this->model = new UsuariosModel($pdo);
+        $this->model = new ErabiltzaileakEredua($pdo);
     }
 
-    public function handle(string $method, ?int $id): void
+    public function handle(string $metodoa, ?int $id): void
     {
-        // Validación CSRF para operaciones de escritura (solo si ya hay sesión)
-        if (isset($_SESSION['user']) && in_array($method, ['POST', 'PUT', 'DELETE'])) {
+        // CSRF baliozkotzea idazketa-eragiketetan (saioa badago soilik)
+        if (isset($_SESSION['user']) && in_array($metodoa, ['POST', 'PUT', 'DELETE'])) {
             $csrfHeader = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
             if (!verify_csrf_token($csrfHeader)) {
-                json_response(['error' => 'Token CSRF inválido.'], 403);
+                json_response(['error' => 'CSRF token baliogabea.'], 403);
             }
         }
 
         require_admin();
 
-        switch ($method) {
+        switch ($metodoa) {
             case 'GET':
                 if ($id !== null) {
                     $row = $this->model->getById($id);

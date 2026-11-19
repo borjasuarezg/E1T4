@@ -1,7 +1,7 @@
 /**
- * Módulo: login.js
- * Página de login de la web cliente.
- * Usa funciones globales de base.js: initSesion, validate*, showToast, API_BASE
+ * Modulua: login.js
+ * Bezero-webaren saioa hasteko orria.
+ * base.js-eko funtzio globalak erabiltzen ditu: initSesion, validate*, showToast, API_BASE
  */
 
 const form = document.getElementById('loginForm');
@@ -33,7 +33,7 @@ form.addEventListener('submit', async (e) => {
         const data = await res.json().catch(() => ({}));
 
         if (!res.ok) {
-            errorBox.textContent = data.error || data.errores?.join(', ') || 'Errorea';
+            errorBox.textContent = data.error || data.erroak?.join(', ') || 'Errorea';
             errorBox.style.display = 'block';
             return;
         }

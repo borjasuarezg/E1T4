@@ -1,43 +1,43 @@
-const vistaListado = document.getElementById('vistaListado');
-const vistaFormulario = document.getElementById('vistaFormulario');
-const formCard = document.getElementById('formUsuario');
-const tbody = document.getElementById('tbodyUsuarios');
-const usuarioForm = document.getElementById('usuarioForm');
+const zerrendaIkuspegia = document.getElementById('zerrendaIkuspegia');
+const inprimakiIkuspegia = document.getElementById('inprimakiIkuspegia');
+const erabiltzaileInprimakia = document.getElementById('formErabiltzailea');
+const tbody = document.getElementById('tbodyErabiltzaileak');
+const erabiltzaileForm = document.getElementById('erabiltzaileForm');
 
 document.getElementById('logoutLink').addEventListener('click', async (e) => {
     e.preventDefault();
     await logout();
 });
 
-function abrirFormulario() {
-    usuarioForm.reset();
-    usuarioForm.querySelectorAll('.field.invalid').forEach(f => f.classList.remove('invalid'));
-    if (vistaListado) vistaListado.hidden = true;
-    const destino = vistaFormulario || formCard;
-    if (destino) {
-        destino.hidden = false;
-        destino.style.display = 'block';
-        destino.scrollIntoView({ behavior: 'smooth', block: 'start' });
+function irekiInprimakia() {
+    erabiltzaileForm.reset();
+    erabiltzaileForm.querySelectorAll('.field.invalid').forEach(f => f.classList.remove('invalid'));
+    if (zerrendaIkuspegia) zerrendaIkuspegia.hidden = true;
+    const helmuga = inprimakiIkuspegia || erabiltzaileInprimakia;
+    if (helmuga) {
+        helmuga.hidden = false;
+        helmuga.style.display = 'block';
+        helmuga.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     document.getElementById('username').focus({ preventScroll: true });
 }
 
-function cerrarFormulario() {
-    const destino = vistaFormulario || formCard;
-    if (destino) {
-        destino.hidden = true;
-        destino.style.display = 'none';
+function itxiInprimakia() {
+    const helmuga = inprimakiIkuspegia || erabiltzaileInprimakia;
+    if (helmuga) {
+        helmuga.hidden = true;
+        helmuga.style.display = 'none';
     }
-    if (vistaListado) vistaListado.hidden = false;
+    if (zerrendaIkuspegia) zerrendaIkuspegia.hidden = false;
 }
 
-async function cargarUsuarios() {
-    const usuarios = await api.get('/usuarios');
-    if (!usuarios.length) {
+async function kargatuErabiltzaileak() {
+    const erabiltzaileak = await api.get('/erabiltzaileak');
+    if (!erabiltzaileak.length) {
         tbody.innerHTML = `<tr><td colspan="3" style="color:var(--text-mute)">Ez dago erabiltzailerik.</td></tr>`;
         return;
     }
-    tbody.innerHTML = usuarios.map(u => `
+    tbody.innerHTML = erabiltzaileak.map(u => `
         <tr data-id="${u.id}">
             <td>${escapeHtml(u.username)}</td>
             <td><span class="badge">${escapeHtml(u.rol)}</span></td>
@@ -51,18 +51,18 @@ tbody.addEventListener('click', async (e) => {
     const id = btn.closest('tr').dataset.id;
     if (!confirm('Ziur zaude erabiltzaile hau ezabatu nahi duzula?')) return;
     try {
-        await api.delete(`/usuarios/${id}`);
-        await cargarUsuarios();
+        await api.delete(`/erabiltzaileak/${id}`);
+        await kargatuErabiltzaileak();
         showToast('Erabiltzailea ongi ezabatu da', 'success');
     } catch (err) {
         showToast(err.message, 'error');
     }
 });
 
-document.getElementById('btnNuevoUsuario').addEventListener('click', abrirFormulario);
-document.getElementById('btnCancelarUsuario').addEventListener('click', cerrarFormulario);
+document.getElementById('btnErabiltzaileBerria').addEventListener('click', irekiInprimakia);
+document.getElementById('btnUtzi').addEventListener('click', itxiInprimakia);
 
-usuarioForm.addEventListener('submit', async (e) => {
+erabiltzaileForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const usernameEl = document.getElementById('username');
     const passwordEl = document.getElementById('password');
@@ -77,8 +77,8 @@ usuarioForm.addEventListener('submit', async (e) => {
             password: passwordEl.value,
             rol: document.getElementById('rol').value
         });
-        cerrarFormulario();
-        await cargarUsuarios();
+        itxiInprimakia();
+        await kargatuErabiltzaileak();
         showToast('Erabiltzailea ongi sortu da', 'success');
     } catch (err) {
         showToast(err.message, 'error');
@@ -89,7 +89,7 @@ usuarioForm.addEventListener('submit', async (e) => {
     const user = await initSesion(true);
     if (!user) return;
     try {
-        await cargarUsuarios();
+        await kargatuErabiltzaileak();
     } catch (err) {
         showToast(err.message, 'error');
     }

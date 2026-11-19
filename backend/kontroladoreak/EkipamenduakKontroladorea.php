@@ -1,31 +1,31 @@
 <?php
 
-require_once __DIR__ . '/../models/EquiposModel.php';
+require_once __DIR__ . '/../ereduak/EkipamenduakEredua.php';
 require_once __DIR__ . '/../helpers.php';
 require_once __DIR__ . '/../auth.php';
 
-class EquiposController
+class EkipamenduakKontroladorea
 {
-    private EquiposModel $model;
+    private EkipamenduakEredua $model;
 
     public function __construct(PDO $pdo)
     {
-        $this->model = new EquiposModel($pdo);
+        $this->model = new EkipamenduakEredua($pdo);
     }
 
-    public function handle(string $method, ?int $id): void
+    public function handle(string $metodoa, ?int $id): void
     {
         require_login();
 
-        // Validación CSRF para operaciones de escritura
-        if (in_array($method, ['POST', 'PUT', 'DELETE'])) {
+        // CSRF baliozkotzea idazketa-eragiketetan
+        if (in_array($metodoa, ['POST', 'PUT', 'DELETE'])) {
             $csrfHeader = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
             if (!verify_csrf_token($csrfHeader)) {
-                json_response(['error' => 'Token CSRF inválido.'], 403);
+                json_response(['error' => 'CSRF token baliogabea.'], 403);
             }
         }
 
-        switch ($method) {
+        switch ($metodoa) {
             case 'GET':
                 if ($id !== null) {
                     $row = $this->model->getById($id);
@@ -41,7 +41,7 @@ class EquiposController
             case 'POST':
                 require_admin();
                 $d = read_json_body();
-                require_fields($d, ['nombre', 'categoria_id']);
+                require_fields($d, ['izena', 'kategoriaId']);
                 try {
                     $newId = $this->model->create($d);
                     json_response(['ok' => true, 'id' => $newId], 201);
@@ -56,7 +56,7 @@ class EquiposController
                     json_response(['error' => 'ID beharrezkoa da.'], 400);
                 }
                 $d = read_json_body();
-                require_fields($d, ['nombre', 'categoria_id']);
+                require_fields($d, ['izena', 'kategoriaId']);
                 try {
                     $this->model->update($id, $d);
                     json_response(['ok' => true]);

@@ -1,42 +1,42 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/../models/ComprasModel.php';
+require_once __DIR__ . '/../ereduak/ErosketakEredua.php';
 require_once __DIR__ . '/../helpers.php';
 require_once __DIR__ . '/../auth.php';
 
-class ComprasController
+class ErosketakKontroladorea
 {
-    private ComprasModel $model;
+    private ErosketakEredua $model;
 
     public function __construct(PDO $pdo)
     {
-        $this->model = new ComprasModel($pdo);
+        $this->model = new ErosketakEredua($pdo);
     }
 
-    public function handle(string $method, ?int $id): void
+    public function handle(string $metodoa, ?int $id): void
     {
         require_login();
 
-        // Validación CSRF para operaciones de escritura
-        if (in_array($method, ['POST', 'DELETE'])) {
+        // CSRF baliozkotzea idazketa-eragiketetan
+        if (in_array($metodoa, ['POST', 'DELETE'])) {
             $csrfHeader = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
             if (!verify_csrf_token($csrfHeader)) {
-                json_response(['error' => 'Token CSRF inválido.'], 403);
+                json_response(['error' => 'CSRF token baliogabea.'], 403);
             }
         }
 
-        if ($method === 'POST') {
+        if ($metodoa === 'POST') {
             require_admin();
             $d = read_json_body();
-            
-            $equipoId = $d['baliabideId'] ?? $d['equipo_id'] ?? null;
-            if (!$equipoId) {
-                json_response(['error' => 'Ekipoa (baliabideId edo equipo_id) beharrezkoa da.'], 422);
+
+            $baliabideId = $d['baliabideId'] ?? null;
+            if (!$baliabideId) {
+                json_response(['error' => 'Ekipamendua (baliabideId) beharrezkoa da.'], 422);
             }
 
             try {
-                $res = $this->model->registrar($d);
+                $res = $this->model->erregistratu($d);
                 json_response($res, 201);
             } catch (PDOException $e) {
                 if ($e->getCode() === '23000') {
@@ -47,7 +47,7 @@ class ComprasController
             return;
         }
 
-        if ($method === 'GET') {
+        if ($metodoa === 'GET') {
             json_response($this->model->getAll());
             return;
         }

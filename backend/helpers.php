@@ -22,14 +22,14 @@ function read_json_body(): array
 
 function require_fields(array $data, array $fields): void
 {
-    $faltan = [];
+    $eremuFaltak = [];
     foreach ($fields as $f) {
         if (!isset($data[$f]) || $data[$f] === '') {
-            $faltan[] = $f;
+            $eremuFaltak[] = $f;
         }
     }
-    if ($faltan) {
-        json_response(['error' => 'Eremu hauek beharrezkoak dira: ' . implode(', ', $faltan)], 422);
+    if ($eremuFaltak) {
+        json_response(['error' => 'Eremu hauek beharrezkoak dira: ' . implode(', ', $eremuFaltak)], 422);
     }
 }
 

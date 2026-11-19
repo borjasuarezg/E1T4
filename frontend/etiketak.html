@@ -13,10 +13,10 @@
     <div class="brand"><span class="tag">INV-01</span><h1>Inbentarioa</h1></div>
     <nav class="nav">
       <a href="index.html">Ekipamendua</a>
-      <a href="etiquetas.html" class="active">Etiketak</a>
-      <a href="gelas.html">Gelak</a>
-      <a href="compras.html">Erosketak</a>
-      <a href="usuarios.html" id="navUsuarios" hidden>Erabiltzaileak</a>
+      <a href="etiketak.html" class="active">Etiketak</a>
+      <a href="gelak.html">Gelak</a>
+      <a href="erosketak.html">Erosketak</a>
+      <a href="erabiltzaileak.html" id="navErabiltzaileak" hidden>Erabiltzaileak</a>
     </nav>
     <div class="user-box" id="userBox">
       <strong id="userName">—</strong>
@@ -26,36 +26,36 @@
   </aside>
 
   <main>
-    <!-- VISTA 1: LISTADO -->
-    <div id="vistaListado">
+    <!-- 1. IKUSPEGIA: ZERRENDA -->
+    <div id="zerrendaIkuspegia">
       <div class="page-head">
         <div><h2>Etiketak / Gailuak</h2><p>Inbentariatutako unitateak eta haien uneko gela</p></div>
-        <button type="button" class="btn btn-amber" id="btnNuevaEtiqueta">+ Unitatea inbentariatu</button>
+        <button type="button" class="btn btn-amber" id="btnEtiketaBerria">+ Unitatea inbentariatu</button>
       </div>
 
       <table class="inventory">
         <thead>
-          <tr><th>Etiketa</th><th>Ekipoa</th><th>Gela (Kokapena)</th><th>Alta Data</th><th>Akzioak</th></tr>
+          <tr><th>Etiketa</th><th>Ekipoa</th><th>Gela (Kokapena)</th><th>Erregistro data</th><th>Akzioak</th></tr>
         </thead>
-        <tbody id="tbodyEtiquetas">
+        <tbody id="tbodyEtiketak">
           <tr><td colspan="5" style="color:var(--text-mute)">Kargatzen…</td></tr>
         </tbody>
       </table>
     </div>
 
-    <!-- VISTA 2: FORMULARIO -->
-    <div id="vistaFormulario" hidden>
+    <!-- 2. IKUSPEGIA: INPRIMAKIA -->
+    <div id="inprimakiIkuspegia" hidden>
       <div class="page-head">
         <div><h2>Unitate berria</h2><p>Inbentariatutako unitateak eta haien uneko gela</p></div>
       </div>
-      <div class="form-card" id="formEtiqueta">
-        <form id="etiquetaForm" novalidate>
-          <div class="field"><label for="codigo">Etiketaren kodea *</label><input type="text" id="codigo" required></div>
-          <div class="field"><label for="equipo_id">Ekipo mota *</label><select id="equipo_id" required></select></div>
-          <div class="field"><label for="gela_id">Hasierako gela *</label><select id="gela_id" required></select></div>
+      <div class="form-card" id="formEtiketa">
+        <form id="etiketaForm" novalidate>
+          <div class="field"><label for="kodea">Etiketaren kodea *</label><input type="text" id="kodea" required></div>
+          <div class="field"><label for="baliabideId">Ekipo mota *</label><select id="baliabideId" required></select></div>
+          <div class="field"><label for="gelaId">Hasierako gela *</label><select id="gelaId" required></select></div>
           <div class="form-actions">
             <button type="submit" class="btn btn-primary">Gorde</button>
-            <button type="button" class="btn btn-ghost" id="btnCancelarEtiqueta">Utzi</button>
+            <button type="button" class="btn btn-ghost" id="btnUtzi">Utzi</button>
           </div>
         </form>
       </div>
@@ -65,6 +65,6 @@
 <script src="js/base.js"></script>
 <script src="js/api.js"></script>
 <script src="js/validate.js"></script>
-<script src="js/etiquetas.js"></script>
+<script src="js/etiketak.js"></script>
 </body>
 </html>

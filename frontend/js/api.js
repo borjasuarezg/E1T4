@@ -12,7 +12,7 @@ async function apiFetch(path, options = {}) {
     try { data = await res.json(); } catch (_) {}
 
     if (!res.ok) {
-        const msg = data?.error || data?.errores?.join(', ') || `Errorea (${res.status})`;
+        const msg = data?.error || data?.erroak?.join(', ') || `Errorea (${res.status})`;
         throw new Error(msg);
     }
     return data;
@@ -31,11 +31,11 @@ async function initSesion(requireAdmin = false) {
         }
         const userNameEl = document.getElementById('userName');
         const userRoleEl = document.getElementById('userRole');
-        const navUsuarios = document.getElementById('navUsuarios');
+        const navErabiltzaileak = document.getElementById('navErabiltzaileak');
 
         if (userNameEl) userNameEl.textContent = res.user.username;
         if (userRoleEl) userRoleEl.textContent = res.user.rol;
-        if (navUsuarios) navUsuarios.hidden = res.user.rol !== 'admin';
+        if (navErabiltzaileak) navErabiltzaileak.hidden = res.user.rol !== 'admin';
 
         csrfToken = res.csrf_token || '';
         return res.user;

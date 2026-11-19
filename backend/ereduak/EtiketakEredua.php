@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../db.php';
 
-class EtiquetasModel
+class EtiketakEredua
 {
     private PDO $pdo;
 
@@ -14,7 +14,7 @@ class EtiquetasModel
     public function getAll(): array
     {
         $stmt = $this->pdo->query(
-            "SELECT g.id, g.etiketa, g.egoera, g.erosketaData AS erosketa_data,
+            "SELECT g.id, g.etiketa, g.egoera, g.erosketaData,
                     b.id AS baliabideId, b.izena AS baliabide_izena, b.marka, b.modeloa,
                     k.id AS kategoriaId, k.izena AS kategoria_izena,
                     m.id AS mugimenduId, m.gelaId, ge.izena AS gela_izena
@@ -31,7 +31,7 @@ class EtiquetasModel
     public function getById(int $id): ?array
     {
         $stmt = $this->pdo->prepare(
-            "SELECT g.id, g.etiketa, g.egoera, g.erosketaData AS erosketa_data, g.baliabideId,
+            "SELECT g.id, g.etiketa, g.egoera, g.erosketaData, g.baliabideId,
                     b.izena AS baliabide_izena, m.gelaId, ge.izena AS gela_izena
              FROM gailuak g
              JOIN baliabideak b ON b.id = g.baliabideId
@@ -99,11 +99,11 @@ class EtiquetasModel
     {
         $this->pdo->beginTransaction();
         try {
-            // Cerrar movimiento activo
+            // Itxi mugimendu aktiboa
             $stmtClose = $this->pdo->prepare('UPDATE mugimenduak SET amaieraData = CURDATE() WHERE gailuId = :gailuId AND amaieraData IS NULL');
             $stmtClose->execute(['gailuId' => $d['gailuId']]);
 
-            // Crear nuevo movimiento solo si se selecciona una gela (si es null, queda "Gela gabe")
+            // Sortu mugimendu berria gela hautatzen bada soilik (null bada, "Gela gabe" gertatzen da)
             if (!empty($d['gelaId'])) {
                 $user = $_SESSION['user'] ?? null;
                 $erabiltzaileId = $user['id'] ?? 1;

@@ -10,7 +10,7 @@ function start_secure_session(): void
     if (session_status() === PHP_SESSION_NONE) {
         $isSecure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
 
-        // Configuración adaptativa de cookie para HTTP e HTTPS
+        // Cookie-konfigurazio egokitzailea HTTP eta HTTPSrako
         session_set_cookie_params([
             'lifetime' => 0,
             'path' => '/',
@@ -66,7 +66,7 @@ function action_login(): void
     $user = $stmt->fetch();
 
     if (!$user) {
-        // Fallback para admin si la base de datos aún no tiene registros
+        // Adminerako ordezkoa datu-basean oraindik erregistrorik ez badago
         if ($data['username'] === 'admin' && $data['password'] === 'admin1234') {
             $user = ['id' => 1, 'username' => 'admin', 'rol' => 'admin'];
             session_regenerate_id(true);

@@ -20,6 +20,7 @@ backend/
 ├── auth.php                         # Autentifikazioa, saio seguruak eta rol-iragazkiak
 ├── helpers.php                      # JSON erantzunak, gorputzaren irakurketa eta baliozkotzea
 ├── api/                             # REST baliabideen sarrera-egokitzaileak
+<<<<<<< HEAD
 │   ├── equipos.php                  # Ekipamenduen sarrera-puntua
 │   ├── etiquetas.php                # Etiketen sarrera-puntua
 │   ├── catalogos.php                # Katalogoen sarrera-puntua (kategoriak eta gelak)
@@ -37,14 +38,33 @@ backend/
     ├── CatalogosModel.php           # Katalogoen Eredua
     ├── ComprasModel.php             # Erosketen Eredua
     └── UsuariosModel.php            # Erabiltzaileen Eredua
+=======
+│   ├── ekipamenduak.php             # Ekipamenduen sarrera-puntua
+│   ├── etiketak.php                 # Etiketen sarrera-puntua
+│   ├── katalogoak.php               # Katalogoen sarrera-puntua (kategoriak eta gelak)
+│   ├── erosketak.php                # Erosketen sarrera-puntua
+│   └── erabiltzaileak.php           # Erabiltzaileen sarrera-puntua
+├── kontroladoreak/                  # Kontroladoreak: HTTP baliozkotzea, baimenak eta fluxua
+│   ├── EkipamenduakKontroladorea.php # Ekipamenduen Kontroladorea
+│   ├── EtiketakKontroladorea.php    # Etiketen Kontroladorea
+│   ├── KatalogoakKontroladorea.php  # Katalogoen Kontroladorea
+│   ├── ErosketakKontroladorea.php   # Erosketen Kontroladorea
+│   └── ErabiltzaileakKontroladorea.php # Erabiltzaileen Kontroladorea
+└── ereduak/                         # Ereduak: prestatutako SQL kontsultak eta ACID transakzioak
+    ├── EkipamenduakEredua.php       # Ekipamenduen Eredua
+    ├── EtiketakEredua.php           # Etiketen Eredua
+    ├── KatalogoakEredua.php         # Katalogoen Eredua
+    ├── ErosketakEredua.php          # Erosketen Eredua
+    └── ErabiltzaileakEredua.php     # Erabiltzaileen Eredua
+>>>>>>> fa83a54 (Aldaketak)
 
 ├ frontend/
 │   ├── login.html
 │   ├── index.html              # ekipamendua
-│   ├── etiquetas.html
-│   ├── gelas.html
-│   ├── compras.html
-│   ├── usuarios.html
+│   ├── etiketak.html
+│   ├── gelak.html
+│   ├── erosketak.html
+│   ├── erabiltzaileak.html
 │   ├── css/style.css
 │   └── js/*.js
 ├ scripts/

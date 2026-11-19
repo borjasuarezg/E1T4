@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../db.php';
 
-class EquiposModel
+class EkipamenduakEredua
 {
     private PDO $pdo;
 
@@ -14,10 +14,10 @@ class EquiposModel
     public function getAll(): array
     {
         $stmt = $this->pdo->query(
-            'SELECT b.id, b.izena AS nombre, b.deskribapena, b.marka, b.modeloa AS modelo, 
-                    b.kategoriaId AS categoria_id, k.izena AS categoria_nombre,
+            'SELECT b.id, b.izena, b.deskribapena, b.marka, b.modeloa,
+                    b.kategoriaId, k.izena AS kategoria_izena,
                     (SELECT COUNT(*) FROM gailuak g WHERE g.baliabideId = b.id) AS stock
-             FROM baliabideak b 
+             FROM baliabideak b
              LEFT JOIN kategoriak k ON k.id = b.kategoriaId
              ORDER BY b.izena'
         );
@@ -26,7 +26,7 @@ class EquiposModel
 
     public function getById(int $id): ?array
     {
-        $stmt = $this->pdo->prepare('SELECT id, izena AS nombre, deskribapena, marka, modeloa AS modelo, kategoriaId AS categoria_id FROM baliabideak WHERE id = ?');
+        $stmt = $this->pdo->prepare('SELECT id, izena, deskribapena, marka, modeloa, kategoriaId FROM baliabideak WHERE id = ?');
         $stmt->execute([$id]);
         $row = $stmt->fetch();
         return $row === false ? null : $row;
@@ -36,14 +36,14 @@ class EquiposModel
     {
         $stmt = $this->pdo->prepare(
             'INSERT INTO baliabideak (kategoriaId, izena, deskribapena, marka, modeloa)
-             VALUES (:categoria_id, :nombre, :descripcion, :marca, :modelo)'
+             VALUES (:kategoriaId, :izena, :deskribapena, :marka, :modeloa)'
         );
         $stmt->execute([
-            'categoria_id' => $d['categoria_id'],
-            'nombre'       => $d['nombre'],
-            'descripcion'  => $d['descripcion'] ?? null,
-            'marca'        => $d['marca'] ?? null,
-            'modelo'       => $d['modelo'] ?? null,
+            'kategoriaId'   => $d['kategoriaId'],
+            'izena'         => $d['izena'],
+            'deskribapena'  => $d['deskribapena'] ?? null,
+            'marka'         => $d['marka'] ?? null,
+            'modeloa'       => $d['modeloa'] ?? null,
         ]);
         return (int)$this->pdo->lastInsertId();
     }
@@ -51,16 +51,16 @@ class EquiposModel
     public function update(int $id, array $d): bool
     {
         $stmt = $this->pdo->prepare(
-            'UPDATE baliabideak 
-             SET kategoriaId = :categoria_id, izena = :nombre, deskribapena = :descripcion, marka = :marca, modeloa = :modelo 
+            'UPDATE baliabideak
+             SET kategoriaId = :kategoriaId, izena = :izena, deskribapena = :deskribapena, marka = :marka, modeloa = :modeloa
              WHERE id = :id'
         );
         return $stmt->execute([
-            'categoria_id' => $d['categoria_id'],
-            'nombre'       => $d['nombre'],
-            'descripcion'  => $d['descripcion'] ?? null,
-            'marca'        => $d['marca'] ?? null,
-            'modelo'       => $d['modelo'] ?? null,
+            'kategoriaId'  => $d['kategoriaId'],
+            'izena'        => $d['izena'],
+            'deskribapena' => $d['deskribapena'] ?? null,
+            'marka'        => $d['marka'] ?? null,
+            'modeloa'      => $d['modeloa'] ?? null,
             'id'           => $id,
         ]);
     }

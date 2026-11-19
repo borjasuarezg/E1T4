@@ -1,12 +1,12 @@
 /**
- * Validación en el LADO CLIENTE.
- * Funciones globales disponibles (compatibles con scripts tradicionales):
+ * Baliozkotzea BEZEROAREN ALDEAN.
+ * Funtzio global eskuragarriak (script tradizionalekin bateragarriak):
  * - validateRequired(input)
  * - validateMinLength(input, min)
  * - validateSelect(select)
  * - setFieldState(field, isValid)
- * 
- * El servidor (PHP) SIEMPRE repite estas comprobaciones ("baliozkotze bikotza").
+ *
+ * Zerbitzariak (PHP) BETI errepikatzen ditu egiaztapen hauek ("baliozkotze bikotza").
  */
 
 function validateRequired(inputEl) {

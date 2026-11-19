@@ -1,32 +1,32 @@
 <?php
 
-require_once __DIR__ . '/../models/EtiquetasModel.php';
+require_once __DIR__ . '/../ereduak/EtiketakEredua.php';
 require_once __DIR__ . '/../helpers.php';
 require_once __DIR__ . '/../auth.php';
 
-class EtiquetasController
+class EtiketakKontroladorea
 {
-    private EtiquetasModel $model;
+    private EtiketakEredua $model;
 
     public function __construct(PDO $pdo)
     {
-        $this->model = new EtiquetasModel($pdo);
+        $this->model = new EtiketakEredua($pdo);
     }
 
-    public function handle(string $method, ?int $id, array $opts = []): void
+    public function handle(string $metodoa, ?int $id, array $opts = []): void
     {
         require_login();
 
-        $accion = $opts['action'] ?? null;
+        $ekintza = $opts['ekintza'] ?? null;
 
-        if (in_array($method, ['POST', 'PUT', 'DELETE', 'PATCH'])) {
+        if (in_array($metodoa, ['POST', 'PUT', 'DELETE', 'PATCH'])) {
             $csrfHeader = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
             if (!verify_csrf_token($csrfHeader)) {
-                json_response(['error' => 'Token CSRF inválido.'], 403);
+                json_response(['error' => 'CSRF token baliogabea.'], 403);
             }
         }
 
-        switch ($method) {
+        switch ($metodoa) {
             case 'GET':
                 if ($id !== null) {
                     $row = $this->model->getById($id);
@@ -41,7 +41,7 @@ class EtiquetasController
 
             case 'POST':
                 require_admin();
-                if ($accion === 'mugitu') {
+                if ($ekintza === 'mugitu') {
                     $d = read_json_body();
                     require_fields($d, ['gailuId']);
                     try {
@@ -56,11 +56,11 @@ class EtiquetasController
                 $d = read_json_body();
 
                 $data = [
-                    'baliabideId'  => $d['baliabideId'] ?? $d['equipo_id'] ?? $d['ekipoId'] ?? null,
-                    'etiketa'      => $d['etiketa'] ?? $d['codigo'] ?? $d['kodea'] ?? null,
-                    'erosketaData' => $d['erosketaData'] ?? $d['erosketa_data'] ?? date('Y-m-d'),
+                    'baliabideId'  => $d['baliabideId'] ?? $d['ekipoId'] ?? null,
+                    'etiketa'      => $d['etiketa'] ?? $d['kodea'] ?? null,
+                    'erosketaData' => $d['erosketaData'] ?? date('Y-m-d'),
                     'egoera'       => $d['egoera'] ?? 'Operatiboa',
-                    'gelaId'       => $d['gelaId'] ?? $d['gela_id'] ?? $d['hasierakoGela'] ?? null,
+                    'gelaId'       => $d['gelaId'] ?? $d['hasierakoGela'] ?? null,
                 ];
 
                 if (!$data['baliabideId'] || !$data['etiketa']) {
@@ -93,11 +93,11 @@ class EtiquetasController
 
             case 'PATCH':
                 require_admin();
-                if ($id === null || $accion !== 'ubicacion') {
+                if ($id === null || $ekintza !== 'kokapena') {
                     json_response(['error' => 'ID edo ekintza okerra.'], 400);
                 }
                 $d = read_json_body();
-                $rawGela = $d['gelaId'] ?? $d['gela_id'] ?? $d['gela'] ?? null;
+                $rawGela = $d['gelaId'] ?? $d['gela'] ?? null;
                 $gelaId = ($rawGela === '' || $rawGela === null || (int)$rawGela === 0) ? null : (int)$rawGela;
 
                 try {

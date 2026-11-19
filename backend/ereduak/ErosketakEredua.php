@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../db.php';
 
-class ComprasModel
+class ErosketakEredua
 {
     private PDO $pdo;
 
@@ -15,9 +15,9 @@ class ComprasModel
     public function getAll(): array
     {
         $stmt = $this->pdo->query(
-            "SELECT b.id AS equipo_id, b.izena AS equipo_nombre,
-                    COALESCE(CAST(g.erosketaData AS CHAR), '—') AS fecha_compra,
-                    COUNT(g.id) AS cantidad
+            "SELECT b.id AS baliabideId, b.izena AS baliabide_izena,
+                    COALESCE(CAST(g.erosketaData AS CHAR), '—') AS erosketaData,
+                    COUNT(g.id) AS kopurua
              FROM gailuak g
              JOIN baliabideak b ON b.id = g.baliabideId
              GROUP BY b.id, b.izena, g.erosketaData
@@ -26,13 +26,13 @@ class ComprasModel
         return $stmt->fetchAll();
     }
 
-    public function registrar(array $d): array
+    public function erregistratu(array $d): array
     {
         $this->pdo->beginTransaction();
         try {
-            $baliabideId = (int)($d['baliabideId'] ?? $d['equipo_id'] ?? 0);
-            $fecha = $d['erosketaData'] ?? $d['fecha_compra'] ?? date('Y-m-d');
-            $cantidad = max(1, (int)($d['cantidad'] ?? 1));
+            $baliabideId = (int)($d['baliabideId'] ?? 0);
+            $erosketaData = $d['erosketaData'] ?? date('Y-m-d');
+            $kopurua = max(1, (int)($d['kopurua'] ?? 1));
             $egoera = $d['egoera'] ?? 'Operatiboa';
             $ids = [];
 
@@ -41,17 +41,17 @@ class ComprasModel
                  VALUES (:baliabideId, :etiketa, :erosketaData, :egoera)'
             );
 
-            for ($i = 0; $i < $cantidad; $i++) {
-                if (!empty($d['etiketa']) && $cantidad === 1) {
+            for ($i = 0; $i < $kopurua; $i++) {
+                if (!empty($d['etiketa']) && $kopurua === 1) {
                     $etiketa = (string)$d['etiketa'];
                 } else {
-                    $etiketa = sprintf('ETK-%d-%s-%03d-%s', $baliabideId, date('Ymd', strtotime($fecha)), $i + 1, bin2hex(random_bytes(2)));
+                    $etiketa = sprintf('ETK-%d-%s-%03d-%s', $baliabideId, date('Ymd', strtotime($erosketaData)), $i + 1, bin2hex(random_bytes(2)));
                 }
 
                 $stmt->execute([
                     'baliabideId'  => $baliabideId,
                     'etiketa'      => $etiketa,
-                    'erosketaData' => $fecha,
+                    'erosketaData' => $erosketaData,
                     'egoera'       => $egoera,
                 ]);
                 $gailuId = (int)$this->pdo->lastInsertId();
@@ -65,13 +65,13 @@ class ComprasModel
                         'gelaId'         => $d['gelaId'],
                         'gailuId'        => $gailuId,
                         'erabiltzaileId' => $erabiltzaileId,
-                        'hasieraData'    => $fecha,
+                        'hasieraData'    => $erosketaData,
                     ]);
                 }
             }
 
             $this->pdo->commit();
-            return ['ok' => true, 'id' => $ids[0] ?? 0, 'ids' => $ids, 'cantidad' => $cantidad];
+            return ['ok' => true, 'id' => $ids[0] ?? 0, 'ids' => $ids, 'kopurua' => $kopurua];
         } catch (Throwable $e) {
             $this->pdo->rollBack();
             throw $e;

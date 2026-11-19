@@ -1,21 +1,22 @@
 <?php
 
 require_once __DIR__ . '/../db.php';
-require_once __DIR__ . '/../controllers/CatalogosController.php';
+require_once __DIR__ . '/../kontroladoreak/EtiketakKontroladorea.php';
 
-$method = $_SERVER['REQUEST_METHOD'];
+$metodoa = $_SERVER['REQUEST_METHOD'];
 $pdo = get_db();
-$controller = new CatalogosController($pdo);
+$controller = new EtiketakKontroladorea($pdo);
 
+// Bidearen analisia
 $path = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 $path = preg_replace('#^api/#', '', $path);
 $segments = array_values(array_filter(explode('/', $path)));
 
-$tabla = $segments[0] ?? '';
 $id = isset($segments[1]) && ctype_digit($segments[1]) ? (int)$segments[1] : null;
+$ekintza = $segments[2] ?? null;
 
 try {
-    $controller->handle($tabla, $method, $id);
+    $controller->handle($metodoa, $id, ['ekintza' => $ekintza]);
 } catch (Throwable $e) {
     error_log($e->getMessage());
     json_response(['error' => 'Zerbitzariaren barne errorea.'], 500);
