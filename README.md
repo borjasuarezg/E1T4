@@ -12,19 +12,32 @@ hedapen (Apache, FTP, SSH, MariaDB, scripts).
 
 ```
 inventario/
-├ backend/
-│   ├── config.php              # DB konexioaren datuak
-│   ├── db.php                  # PDO konexioa
-│   ├── auth.php                # login/logout/register (saioak) - reforzatua
-│   ├── helpers.php             # JSON erantzunak, balidazioa
-│   ├── index.php               # API-aren router bakarra
-│   ├── .htaccess              # /api/* -> index.php birbideratzea
-│   └── api/
-│       ├── equipos.php
-│       ├── etiquetas.php
-│       ├── catalogos.php       # categorias + gelas
-│       ├── compras.php
-│       └── usuarios.php
+backend/
+├── .htaccess                        # URL garbien berridazketa index.php fitxategira
+├── index.php                        # Bideratzaile nagusia: CORS kudeaketa eta API bideratzea
+├── config.php                       # Parametro zentralizatuak (DB, saioak, CORS)
+├── db.php                           # PDO konexio bakarra (Singleton eredua)
+├── auth.php                         # Autentifikazioa, saio seguruak eta rol-iragazkiak
+├── helpers.php                      # JSON erantzunak, gorputzaren irakurketa eta baliozkotzea
+├── api/                             # REST baliabideen sarrera-egokitzaileak
+│   ├── equipos.php                  # Ekipamenduen sarrera-puntua
+│   ├── etiquetas.php                # Etiketen sarrera-puntua
+│   ├── catalogos.php                # Katalogoen sarrera-puntua (kategoriak eta gelak)
+│   ├── compras.php                  # Erosketen sarrera-puntua
+│   └── usuarios.php                 # Erabiltzaileen sarrera-puntua
+├── controllers/                     # Kontroladoreak: HTTP baliozkotzea, baimenak eta fluxua
+│   ├── EquiposController.php        # Ekipamenduen Kontroladorea
+│   ├── EtiquetasController.php      # Etiketen Kontroladorea
+│   ├── CatalogosController.php      # Katalogoen Kontroladorea
+│   ├── ComprasController.php        # Erosketen Kontroladorea
+│   └── UsuariosController.php       # Erabiltzaileen Kontroladorea
+└── models/                          # Ereduak: prestatutako SQL kontsultak eta ACID transakzioak
+    ├── EquiposModel.php             # Ekipamenduen Eredua
+    ├── EtiquetasModel.php           # Etiketen Eredua
+    ├── CatalogosModel.php           # Katalogoen Eredua
+    ├── ComprasModel.php             # Erosketen Eredua
+    └── UsuariosModel.php            # Erabiltzaileen Eredua
+
 ├ frontend/
 │   ├── login.html
 │   ├── index.html              # ekipamendua
